@@ -423,6 +423,30 @@ if selected:
                 df_filtered = df_filtered[df_filtered["Client Name"].astype(str).str.contains(client_filter, case=False, na=False)]
             if payment_filter != "All":
                 df_filtered = df_filtered[df_filtered["Payment Status"] == payment_filter]
+            st.markdown("""
+<style>
+/* Make AgGrid column headers show full text */
+.ag-header-cell-label {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    height: auto !important;
+    line-height: 1.2 !important;
+}
+
+/* Allow wrapping inside header */
+.ag-header-cell-text {
+    white-space: normal !important;
+}
+
+/* Optional: Increase header height so wrapped text fits */
+.ag-header {
+    height: 70px !important;
+    max-height: 120px !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
             if contract_filter != "All":
                 df_filtered = df_filtered[df_filtered["Contract Status"] == contract_filter]
 
@@ -458,6 +482,7 @@ thead tr th {
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 
 
