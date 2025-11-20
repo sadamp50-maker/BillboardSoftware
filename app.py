@@ -252,13 +252,12 @@ if selected:
     # Image upload for this selected S No.
     st.sidebar.markdown("**Upload / Replace Billboard Image**")
     uploaded_file = st.sidebar.file_uploader("Choose image (png/jpg):", type=["png", "jpg", "jpeg"], key=f"img_{sno}")
-    if uploaded_file:
-        # save to disk
-        ext = os.path.splitext(uploaded_file.name)[1]
-        fname = f"sno_{sno}{ext}"
-        fpath = os.path.join(IMAGE_DIR, fname)
-        with open(fpath, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-        # update df field
-        st.session_state.df.at[idx, "Billboard Image / Link"] = fpath
-        st.sidebar.success(f"Image saved: {fpat
+  if uploaded_image is not None:
+    img_name = uploaded_image.name
+    fpath = os.path.join("images", img_name)
+    with open(fpath, "wb") as f:
+        f.write(uploaded_image.getbuffer())
+
+    st.sidebar.success(f"Image saved: {fpath}")
+
+
