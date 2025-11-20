@@ -30,14 +30,14 @@ edited_df = st.data_editor(
     key="editor"
 )
 
-# ---- DARKER COLORS STYLE ----
+# ---- MEDIUM COLOR STYLE ----
 def style_table(x):
     df_styled = pd.DataFrame('', index=x.index, columns=x.columns)
     for i in range(len(x)):
         if i % 2 == 0:
-            df_styled.iloc[i] = 'background-color: #d2e2ff;'   # darker light blue
+            df_styled.iloc[i] = 'background-color: #e0e8ff;'   # medium blue tint
         else:
-            df_styled.iloc[i] = 'background-color: #e6dfff;'   # darker light lavender
+            df_styled.iloc[i] = 'background-color: #f0e8ff;'   # medium lavender tint
     return df_styled
 
 styled = edited_df.style.apply(style_table, axis=None)\
@@ -45,14 +45,14 @@ styled = edited_df.style.apply(style_table, axis=None)\
         {
             'selector': 'th',
             'props': [
-                ('background-color', '#9bbcff'),
+                ('background-color', '#b7ccff'),
                 ('color', 'black'),
                 ('font-weight', 'bold')
             ]
         }
     ])
 
-st.subheader("📘 Styled Table View (Dark Colors Applied)")
+st.subheader("📘 Styled Table View (Medium Colors)")
 st.dataframe(styled, use_container_width=True)
 
 # ---- EXPORT OPTIONS ----
