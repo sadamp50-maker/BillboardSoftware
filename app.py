@@ -446,27 +446,20 @@ st.download_button(
     mime="text/csv"
 )
 st.markdown("""
-    <style>
-        table {
-            border-collapse: collapse !important;
-            width: 100%;
-        }
-        table th, table td {
-            border: 2px solid black !important;
-            padding: 6px !important;
-            text-align: left !important;
-        }
-        thead th {
-            border: 2px solid black !important;
-        }
-        tbody td {
-            border: 2px solid black !important;
-        }
-        tr {
-            border: 2px solid black !important;
-        }
-    </style>
+<style>
+tbody tr td, tbody tr th {
+    border: 1px solid #333 !important;   /* Dark border */
+}
+thead tr th {
+    border: 1px solid #333 !important;   /* Header border */
+}
+.css-1q1n0ol { 
+    border: 1px solid #333 !important;   /* Outer border */
+}
+</style>
 """, unsafe_allow_html=True)
+
+
 
 
 
