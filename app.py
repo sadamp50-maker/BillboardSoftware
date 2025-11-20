@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 
-# ---- PAGE CONFIG ----
 st.set_page_config(page_title="Billboard Dashboard", layout="wide")
 
 # ---- COLUMNS ----
@@ -14,56 +13,70 @@ columns = [
     "Remarks / Notes", "Billboard Image / Link", "Partner’s Share"
 ]
 
-# ---- INITIAL 50 ROW DATA ----
+# Create initial empty data
 df = pd.DataFrame({col: [""] * 50 for col in columns})
 df["S No."] = range(1, 51)
 
-st.title("📊 Billboard Management Dashboard")
+st.title("📊 Billboard Management Dashboard (Advanced Table)")
 
-st.write("Fill or edit the data below:")
-
-# ---- Editable table ----
-edited_df = st.data_editor(
-    df,
-    num_rows="dynamic",
-    use_container_width=True,
-    key="editor"
+# Convert df to HTML with custom JS for editing
+table_html = df.to_html(
+    index=False,
+    classes="styled-table",
+    escape=False
 )
 
-# ---- MEDIUM COLOR STYLE ----
-def style_table(x):
-    df_styled = pd.DataFrame('', index=x.index, columns=x.columns)
-    for i in range(len(x)):
-        if i % 2 == 0:
-            df_styled.iloc[i] = 'background-color: #e0e8ff;'   # medium blue tint
-        else:
-            df_styled.iloc[i] = 'background-color: #f0e8ff;'   # medium lavender tint
-    return df_styled
+# Inject CSS + JS
+page = f"""
+<style>
+/* Table Layout */
+.styled-table {{
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 15px;
+    width: 100%;
+    border: 1px solid #ccc;
+}}
 
-styled = edited_df.style.apply(style_table, axis=None)\
-    .set_table_styles([
-        {
-            'selector': 'th',
-            'props': [
-                ('background-color', '#b7ccff'),
-                ('color', 'black'),
-                ('font-weight', 'bold')
-            ]
-        }
-    ])
+.styled-table th {{
+    background-color: #b7ccff; 
+    color: black;
+    text-align: left;
+    padding: 10px;
+}}
 
-# ---- Single Styled Table ----
-st.dataframe(styled, use_container_width=True)
+.styled-table td {{
+    padding: 8px;
+    border: 1px solid #ddd;
+}}
 
-# ---- EXPORT OPTIONS ----
-st.subheader("📁 Export Data")
+/* Row Colors (Medium Colors) */
+.styled-table tr:nth-child(even) {{
+    background-color: #e0e8ff;
+}}
 
-file_name = st.text_input("Enter file name:", "Billboard_Dashboard")
+.styled-table tr:nth-child(odd) {{
+    background-color: #f0e8ff;
+}}
 
-if st.button("Download Excel File"):
-    edited_df.to_excel(f"{file_name}.xlsx", index=False)
-    st.success("Excel file ready!")
+/* Editable cell highlight */
+td:focus {{
+    outline: 2px solid #6a8cff;
+    background-color: #dbe4ff;
+}}
+</style>
 
-if st.button("Download CSV File"):
-    edited_df.to_csv(f"{file_name}.csv", index=False)
-    st.success("CSV file ready!")
+<script>
+// Make all table cells editable except headers
+document.addEventListener("DOMContentLoaded", function() {{
+    let cells = document.querySelectorAll("td");
+    cells.forEach(cell => {{
+        cell.contentEditable = "true";
+    }});
+}});
+</script>
+
+{table_html}
+"""
+
+st.markdown(page, unsafe_allow_html=True)
