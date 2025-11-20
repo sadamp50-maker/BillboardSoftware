@@ -52,7 +52,7 @@ styled = edited_df.style.apply(style_table, axis=None)\
         }
     ])
 
-st.subheader("📘 Styled Table View (Medium Colors)")
+# ---- Single Styled Table ----
 st.dataframe(styled, use_container_width=True)
 
 # ---- EXPORT OPTIONS ----
@@ -62,8 +62,8 @@ file_name = st.text_input("Enter file name:", "Billboard_Dashboard")
 
 if st.button("Download Excel File"):
     edited_df.to_excel(f"{file_name}.xlsx", index=False)
-    st.success("Excel file created successfully!")
+    st.success("Excel file ready!")
 
 if st.button("Download CSV File"):
     edited_df.to_csv(f"{file_name}.csv", index=False)
-    st.success("CSV file created successfully!")
+    st.success("CSV file ready!")
