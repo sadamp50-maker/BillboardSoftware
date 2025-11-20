@@ -685,37 +685,35 @@ if selected:
                 st.sidebar.image(existing_img, caption="Existing Image", use_column_width=True)
             except:
                 st.sidebar.write("Image path exists but preview failed.")
-
-        st.markdown("""
+st.markdown("""
 <style>
 
-/* Ensure full border grid like Excel */
+/* Excel-style FULL cell borders */
 [data-testid="stStyledTable"] table {
     border-collapse: collapse !important;
     width: 100%;
 }
 
-/* Border around every cell (row + column border) */
-[data-testid="stStyledTable"] table td, 
-[data-testid="stStyledTable"] table th {
-    border: 1px solid #3B3B3B !important;   /* Dark gray border */
-    padding: 6px 10px !important;
+/* Every cell (row + column) gets full border */
+[data-testid="stStyledTable"] table th,
+[data-testid="stStyledTable"] table td {
+    border: 1px solid #000000 !important;  /* solid black border */
+    padding: 8px 10px !important;
 }
 
-/* Header Style */
+/* Header styling */
 [data-testid="stStyledTable"] thead th {
-    background-color: #1E3A8A !important;  /* Dark Blue */
+    background-color: #1E3A8A !important;  /* dark blue header */
     color: white !important;
     font-weight: bold !important;
 }
 
-/* Alternating Row Colors */
+/* Alternate row colors */
 [data-testid="stStyledTable"] tbody tr:nth-child(odd) {
-    background-color: #F0F0F0 !important;  /* Light Gray */
+    background-color: #F8F8F8 !important;
 }
-
 [data-testid="stStyledTable"] tbody tr:nth-child(even) {
-    background-color: #E4E4E4 !important;  /* Slightly darker Gray */
+    background-color: #EFEFEF !important;
 }
 
 </style>
