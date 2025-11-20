@@ -686,53 +686,37 @@ if selected:
             except:
                 st.sidebar.write("Image path exists but preview failed.")
 
-        if st.sidebar.button("Apply changes"):
-            # prepare row dict to save
-            new_row = {
-                col: "" for col in COLUMNS
-            }
-            new_row["S No."] = str(sno)
-            new_row["Billboard ID"] = bid
-            new_row["Location / Address"] = loc
-            new_row["Billboard Size"] = size
-            new_row["Client Name"] = client
-            new_row["Company Name"] = company
-            new_row["Contact Number"] = contact
-            new_row["Email"] = email
-            new_row["Contract Start Date"] = str(start_date)
-            new_row["Contract End Date"] = str(end_date)
-            new_row["Rental Duration"] = row.get("Rental Duration", "")
-            new_row["Rent Amount (PKR)"] = str(round(rent, 2))
-            new_row["Advance Received (PKR)"] = str(round(adv, 2))
-            new_row["Balance / Credit (PKR)"] = str(round(rent - adv, 2))
-            new_row["Payment Status"] = pay_status
-            new_row["Contract Status"] = contract_status
-            new_row["Days Remaining"] = str(calc_days_remaining(str(end_date)))
-            new_row["Remarks / Notes"] = remarks
-            # if uploaded just now, fpath variable exists; otherwise keep previous
-            if uploaded_file is not None:
-                new_row["Billboard Image / Link"] = fpath
-            else:
-                new_row["Billboard Image / Link"] = row.get("Billboard Image / Link", "")
-            new_row["Partner’s Share"] = partner_share
+        st.markdown("""
+<style>
 
-            save_row_to_db(new_row)
-            st.sidebar.success("Row updated and saved to database.")
+/* Ensure full border grid like Excel */
+[data-testid="stStyledTable"] table {
+    border-collapse: collapse !important;
+    width: 100%;
+}
 
-            # reload display
-            df_raw = load_df_from_db()
-            df_raw["_rowid_"] = df_raw["_rowid_"].astype(int)
-            display_df = df_raw.drop(columns=["_rowid_"]).copy()
+/* Border around every cell (row + column border) */
+[data-testid="stStyledTable"] table td, 
+[data-testid="stStyledTable"] table th {
+    border: 1px solid #3B3B3B !important;   /* Dark gray border */
+    padding: 6px 10px !important;
+}
 
-# ---------------- Show counts & export current DB ----------------
-conn = get_conn()
-full_df = pd.read_sql_query(f"SELECT * FROM {TABLE_NAME}", conn)
-conn.close()
+/* Header Style */
+[data-testid="stStyledTable"] thead th {
+    background-color: #1E3A8A !important;  /* Dark Blue */
+    color: white !important;
+    font-weight: bold !important;
+}
 
-st.markdown(f"**Showing {len(df_filtered)} rows (filtered). Total rows in DB: {len(full_df)}**")
+/* Alternating Row Colors */
+[data-testid="stStyledTable"] tbody tr:nth-child(odd) {
+    background-color: #F0F0F0 !important;  /* Light Gray */
+}
 
-st.subheader("⬇️ Export current DB")
-excel_bytes = dataframe_to_excel_bytes(full_df)
-st.download_button("⬇️ Download Excel (.xlsx)", data=excel_bytes, file_name="Billboard_DB.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-csv_bytes = full_df.to_csv(index=False).encode("utf-8")
-st.download_button("⬇️ Download CSV", data=csv_bytes, file_name="Billboard_DB.csv", mime="text/csv")
+[data-testid="stStyledTable"] tbody tr:nth-child(even) {
+    background-color: #E4E4E4 !important;  /* Slightly darker Gray */
+}
+
+</style>
+""", unsafe_allow_html=True)
