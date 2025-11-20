@@ -2,90 +2,84 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-st.set_page_config(page_title="Billboard Dashboard", layout="wide")
+st.set_page_config(page_title="Billboard Software", layout="wide")
 
-# -----------------------------
-# 1) READ EXCEL FILE
-# -----------------------------
+st.title("📊 Billboard Management System")
 
-FILE_PATH = "Billboard.xlsm"
+# ----------------------------------------------------------
+# 1) Load Excel File
+# ----------------------------------------------------------
+
+FILE_PATH = "Billboard.xlsm"   # Your file name in GitHub repo
 
 @st.cache_data
 def load_data():
-    df = pd.read_excel(FILE_PATH, sheet_name="Billboard Rentals")
+    df = pd.read_excel(FILE_PATH, engine="openpyxl")
+
+    # Columns that must convert to datetime
+    date_cols = ["Contract Start Date", "Contract End Date"]
+
+    for col in date_cols:
+        if col in df.columns:
+            df[col] = pd.to_datetime(df[col], errors="coerce")
+
+    # Create Status Column
+    today = pd.Timestamp.today()
+    df["Contract Status (Active / Expired)"] = df["Contract End Date"].apply(
+        lambda x: "Expired" if pd.isna(x) or x < today else "Active"
+    )
+
+    # Days remaining
+    df["Days Remaining"] = df["Contract End Date"].apply(
+        lambda x: (x - today).days if not pd.isna(x) else None
+    )
+
     return df
 
 df = load_data()
 
-# -----------------------------
-# 2) CLEAN DATE COLUMNS
-# -----------------------------
+st.success("Excel File Loaded Successfully!")
 
-date_cols = ["Booking Date", "Contract Start Date", "Contract End Date"]
+# ----------------------------------------------------------
+# 2) Filters
+# ----------------------------------------------------------
 
-for col in date_cols:
-    df[col] = pd.to_datetime(df[col], errors="coerce")
+st.sidebar.header("🔍 Filters")
 
-today = pd.to_datetime(datetime.today().date())
+status_filter = st.sidebar.selectbox(
+    "Contract Status:",
+    ["All", "Active", "Expired"]
+)
 
-# -----------------------------
-# 3) STATUS CALCULATION (SAFE)
-# -----------------------------
+client_filter = st.sidebar.text_input("Search Client Name:")
 
-def check_status(x):
-    if pd.isna(x):
-        return "Active"
-    return "Expired" if x < today else "Active"
+filtered_df = df.copy()
 
-df["Status"] = df["Contract End Date"].apply(check_status)
-
-# -----------------------------
-# 4) SUMMARY DASHBOARD
-# -----------------------------
-
-total = len(df)
-active = len(df[df["Status"] == "Active"])
-expired = len(df[df["Status"] == "Expired"])
-
-# Month Filter Summary
-df_month = df[df["Booking Date"].dt.month == today.month]
-rented_this_month = len(df_month)
-
-# -----------------------------
-# 5) UI STARTS
-# -----------------------------
-
-st.title("📊 Billboard Rental Dashboard")
-st.write("Live Dashboard — Excel Connected Version")
-
-# -----------------------------
-# KPI ROW
-# -----------------------------
-
-col1, col2, col3, col4 = st.columns(4)
-
-col1.metric("Total Billboards", total)
-col2.metric("Active Contracts", active)
-col3.metric("Expired Contracts", expired)
-col4.metric("Rented This Month", rented_this_month)
-
-st.divider()
-
-# -----------------------------
-# TABLE VIEW
-# -----------------------------
-
-st.subheader("📄 All Billboard Records")
-
-search = st.text_input("Search Billboard, Client, Location…")
-
-df_display = df.copy()
-
-if search.strip() != "":
-    df_display = df_display[
-        df_display.apply(lambda row: search.lower() in row.astype(str).str.lower().to_string(), axis=1)
+if status_filter != "All":
+    filtered_df = filtered_df[
+        filtered_df["Contract Status (Active / Expired)"] == status_filter
     ]
 
-st.dataframe(df_display, use_container_width=True)
+if client_filter:
+    filtered_df = filtered_df[
+        filtered_df["Client Name"].str.contains(client_filter, case=False, na=False)
+    ]
 
-st.success("Dashboard Loaded Successfully ✔")
+# ----------------------------------------------------------
+# 3) Show Table
+# ----------------------------------------------------------
+
+st.subheader("📋 Contract Records")
+
+st.dataframe(filtered_df, use_container_width=True)
+
+# ----------------------------------------------------------
+# 4) Download Option
+# ----------------------------------------------------------
+
+st.download_button(
+    "⬇ Download Filtered Excel",
+    data=filtered_df.to_csv(index=False).encode("utf-8"),
+    file_name="Filtered_Billboard_Data.csv",
+    mime="text/csv"
+)
