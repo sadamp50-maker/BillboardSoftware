@@ -215,6 +215,16 @@ st.markdown(
         box-shadow: 0 6px 18px rgba(2,6,23,0.25);
     }
 
+    
+    /* Force header text to wrap */
+    .ag-header-cell-label {
+        white-space: normal !important;
+        line-height: 1.2 !important;
+        height: auto !important;
+        padding: 4px !important;
+        text-overflow: clip !important;
+    }
+
     /* Header cells */
     .ag-header-cell {
         border-right: 1.5px solid #0b1220 !important;
