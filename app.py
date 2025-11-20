@@ -11,6 +11,36 @@ from PIL import Image
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode, GridUpdateMode
 
 # ---------------- Settings ----------------
+# ============================  TABLE FIX CSS  ============================
+st.markdown("""
+<style>
+/* SHOW FULL COLUMN HEADER TEXT */
+thead tr th {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    text-overflow: clip !important;
+    overflow-wrap: break-word !important;
+}
+
+/* DARK FULL GRID BORDER FOR ALL CELLS */
+table, th, td {
+    border: 2px solid black !important;
+    border-collapse: collapse !important;
+}
+
+/* FIX HEADER HEIGHT */
+thead th {
+    height: auto !important;
+}
+
+/* FIX CELL PADDING */
+th, td {
+    padding: 6px !important;
+}
+</style>
+""", unsafe_allow_html=True)
+# =======================================================================
+
 st.set_page_config(page_title="Billboard Dashboard (SQLite)", layout="wide")
 DB_FILE = "billboard.db"
 IMAGE_DIR = "uploaded_images"
@@ -482,6 +512,7 @@ thead tr th {
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 
 
