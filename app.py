@@ -688,65 +688,52 @@ if selected:
 st.markdown("""
 <style>
 
-/* --- FULL TABLE BOX STYLE (BEST VERSION) --- */
+/* --- FULL TABLE DARK BORDER --- */
 [data-testid="stStyledTable"] table {
     border-collapse: separate !important;
     border-spacing: 0 !important;
     width: 100%;
     font-size: 14px;
-    border: 2px solid #374151 !important;   
+    border: 3px solid #1f2937 !important;       /* DARK OUTER BORDER */
     border-radius: 10px !important;
     overflow: hidden;
-    box-shadow: 0 0 18px rgba(0,0,0,0.25);
+    box-shadow: 0 0 20px rgba(0,0,0,0.25);
 }
 
-/* --- EVERY CELL LOOKS LIKE A BOX --- */
+/* --- EVERY CELL DARK BORDER --- */
 [data-testid="stStyledTable"] table th,
 [data-testid="stStyledTable"] table td {
-    border: 1.5px solid #4B5563 !important;  
+    border: 2px solid #111827 !important;       /* VERY DARK CELL BORDER */
     padding: 8px 12px !important;
     background: white !important;
 }
 
-/* --- HEADER STYLING --- */
+/* --- HEADER --- */
 [data-testid="stStyledTable"] thead th {
-    background-color: #1F2937 !important;
+    background-color: #111827 !important;
     color: white !important;
     font-weight: 700 !important;
     text-align: left !important;
     position: sticky !important;
     top: 0;
     z-index: 10;
-    border-bottom: 2px solid #111827 !important;
+    border-bottom: 3px solid #000 !important;   /* Dark header line */
 }
 
-/* --- ZEBRA ROWS --- */
+/* --- ROW COLORS (Not too light, not too dark) --- */
 [data-testid="stStyledTable"] tbody tr:nth-child(odd) td {
-    background-color: #F3F4F6 !important;
+    background-color: #e5e7eb !important;
 }
 
 [data-testid="stStyledTable"] tbody tr:nth-child(even) td {
-    background-color: #E5E7EB !important;
+    background-color: #d1d5db !important;
 }
 
 /* --- HOVER EFFECT --- */
 [data-testid="stStyledTable"] tbody tr:hover td {
-    background-color: #D1D5DB !important;
-    transition: 0.15s ease-in-out;
-}
-
-/* --- COLUMN RESIZE --- */
-[data-testid="stStyledTable"] table th {
-    resize: horizontal;
-    overflow: auto;
-}
-
-/* --- SMOOTH SCROLL --- */
-[data-testid="stHorizontalBlock"] {
-    overflow-x: auto !important;
+    background-color: #c7cdd3 !important;
+    transition: 0.18s ease-in-out;
 }
 
 </style>
 """, unsafe_allow_html=True)
-
-
