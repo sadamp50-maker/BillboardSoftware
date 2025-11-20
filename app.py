@@ -22,7 +22,7 @@ st.title("📊 Billboard Management Dashboard")
 
 st.write("Fill or edit the data below:")
 
-# ---- EDITABLE VERSION ----
+# ---- Editable table ----
 edited_df = st.data_editor(
     df,
     num_rows="dynamic",
@@ -30,33 +30,40 @@ edited_df = st.data_editor(
     key="editor"
 )
 
-# ---- STYLE FUNCTION (Alternate Row Colors + Header Color) ----
+# ---- DARKER COLORS STYLE ----
 def style_table(x):
     df_styled = pd.DataFrame('', index=x.index, columns=x.columns)
     for i in range(len(x)):
         if i % 2 == 0:
-            df_styled.iloc[i] = 'background-color: #f2f9ff;'   # light blue
+            df_styled.iloc[i] = 'background-color: #d2e2ff;'   # darker light blue
         else:
-            df_styled.iloc[i] = 'background-color: #fdf7ff;'   # light pink
+            df_styled.iloc[i] = 'background-color: #e6dfff;'   # darker light lavender
     return df_styled
 
 styled = edited_df.style.apply(style_table, axis=None)\
     .set_table_styles([
-        {'selector': 'th', 'props': [('background-color', '#d6e6ff'), ('color', 'black'), ('font-weight', 'bold')]}
+        {
+            'selector': 'th',
+            'props': [
+                ('background-color', '#9bbcff'),
+                ('color', 'black'),
+                ('font-weight', 'bold')
+            ]
+        }
     ])
 
-st.subheader("📘 Styled Table View (Header + Row Colors)")
+st.subheader("📘 Styled Table View (Dark Colors Applied)")
 st.dataframe(styled, use_container_width=True)
 
-# ---- EXPORT EXCEL ----
+# ---- EXPORT OPTIONS ----
 st.subheader("📁 Export Data")
 
 file_name = st.text_input("Enter file name:", "Billboard_Dashboard")
 
 if st.button("Download Excel File"):
     edited_df.to_excel(f"{file_name}.xlsx", index=False)
-    st.success("Excel file created in working directory!")
+    st.success("Excel file created successfully!")
 
 if st.button("Download CSV File"):
     edited_df.to_csv(f"{file_name}.csv", index=False)
-    st.success("CSV file created in working directory!")
+    st.success("CSV file created successfully!")
