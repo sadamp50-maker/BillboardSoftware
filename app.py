@@ -457,4 +457,27 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+st.markdown("""
+    <style>
+        table {
+            border-collapse: collapse !important;
+            width: 100%;
+        }
+        table th, table td {
+            border: 2px solid black !important;
+            padding: 6px !important;
+            text-align: left !important;
+        }
+        thead th {
+            border: 2px solid black !important;
+        }
+        tbody td {
+            border: 2px solid black !important;
+        }
+        tr {
+            border: 2px solid black !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 
