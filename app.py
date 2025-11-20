@@ -3,6 +3,7 @@ import pandas as pd
 import os
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode, GridUpdateMode
 from io import BytesIO
+import io
 from datetime import datetime, date
 from PIL import Image
 
@@ -30,15 +31,14 @@ def load_initial_df():
     if os.path.exists(DATA_FILE):
         try:
             d = pd.read_excel(DATA_FILE, engine="openpyxl")
-            # Ensure columns exist
             for col in COLUMNS:
                 if col not in d.columns:
                     d[col] = ""
             d = d[COLUMNS]
             return d
-        except Exception:
+        except:
             pass
-    # default new DF
+
     df0 = pd.DataFrame({col: [""] * 50 for col in COLUMNS})
     df0["S No."] = range(1, 51)
     df0["Payment Status"] = "Unpaid"
@@ -46,17 +46,16 @@ def load_initial_df():
     return df0
 
 def save_df_to_excel(df):
-    output = io.BytesIO()
+    output = BytesIO()
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
         df.to_excel(writer, index=False, sheet_name="Dashboard")
-    processed_data = output.getvalue()
-    return processed_data
+    return output.getvalue()
+
 def safe_float(x):
     try:
         if pd.isna(x) or x == "":
             return 0.0
-        s = str(x).replace(",", "").strip()
-        return float(s)
+        return float(str(x).replace(",", "").strip())
     except:
         return 0.0
 
@@ -70,47 +69,45 @@ def calc_days_remaining(end_date):
             end = pd.to_datetime(end_date)
         if pd.isna(end):
             return ""
-        delta = (end.date() - date.today()).days
-        return int(delta)
+        return int((end.date() - date.today()).days)
     except:
         return ""
 
-# ---------- Load / Session State ----------
+# ---------- Load ----------
 if "df" not in st.session_state:
     st.session_state.df = load_initial_df()
-    # ensure types
     st.session_state.df["S No."] = st.session_state.df["S No."].astype(int)
 
 df = st.session_state.df.copy()
 
-# ---------- Sidebar: Search / Filters / Upload ----------
+# ---------- Sidebar ----------
 with st.sidebar:
     st.title("🔎 Filters & Actions")
-    search_q = st.text_input("Search (all columns):", value="")
-    client_filter = st.text_input("Client Name contains:", value="")
-    payment_filter = st.selectbox("Payment Status:", options=["All"] + PAYMENT_OPTIONS, index=0)
-    contract_filter = st.selectbox("Contract Status:", options=["All"] + CONTRACT_OPTIONS, index=0)
+    search_q = st.text_input("Search:", "")
+    client_filter = st.text_input("Client Name contains:", "")
+    payment_filter = st.selectbox("Payment Status:", ["All"] + PAYMENT_OPTIONS)
+    contract_filter = st.selectbox("Contract Status:", ["All"] + CONTRACT_OPTIONS)
+
     st.markdown("---")
     st.header("📁 Save / Export")
-    if st.button("💾 Save (autosave + file)"):
+    if st.button("💾 Save"):
         excel_bytes = save_df_to_excel(st.session_state.df)
-        st.success("Saved to " + DATA_FILE)
-        st.download_button("⬇️ Download saved Excel", data=excel_bytes, file_name=DATA_FILE, mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        st.success("Saved Successfully!")
+        st.download_button("⬇️ Download File", data=excel_bytes, file_name=DATA_FILE)
+
     st.markdown("---")
     st.header("📌 Tips")
     st.write("""
-- Select a row in table to edit detailed fields below.
-- Use numeric fields for Rent/Advance (commas allowed).
-- Upload images per selected row (they will be saved to `uploaded_images/`).
-- Balance and Days Remaining calculate automatically.
+- Click a row to edit  
+- Upload image for selected row  
+- Balance & Days Remaining auto update  
 """)
 
-# ---------- Prepare display_df with filters ----------
+# ---------- Filters ----------
 display_df = df.copy()
 
-# apply global search
 if search_q:
-    mask = display_df.astype(str).apply(lambda row: row.str.contains(search_q, case=False, na=False)).any(axis=1)
+    mask = display_df.astype(str).apply(lambda r: r.str.contains(search_q, case=False, na=False)).any(axis=1)
     display_df = display_df[mask]
 
 if client_filter:
@@ -122,144 +119,135 @@ if payment_filter != "All":
 if contract_filter != "All":
     display_df = display_df[display_df["Contract Status"] == contract_filter]
 
-# ---------- Configure AgGrid ----------
+# ---------- AgGrid Setup ----------
 gb = GridOptionsBuilder.from_dataframe(display_df)
 gb.configure_default_column(editable=False, filter=True, sortable=True, resizable=True)
-# allow editing in-grid for some columns (basic inline edits)
-editable_cols = ["Billboard ID", "Location / Address", "Billboard Size", "Client Name", "Company Name",
-                 "Contact Number", "Email", "Rental Duration", "Remarks / Notes", "Partner’s Share"]
+
+editable_cols = [
+    "Billboard ID", "Location / Address", "Billboard Size", "Client Name", "Company Name",
+    "Contact Number", "Email", "Rental Duration", "Remarks / Notes", "Partner’s Share"
+]
 for c in editable_cols:
     gb.configure_column(c, editable=True)
 
 gb.configure_column("S No.", editable=False, pinned="left", width=80)
+
 gb.configure_column("Rent Amount (PKR)", type=["numericColumn"], editable=True)
 gb.configure_column("Advance Received (PKR)", type=["numericColumn"], editable=True)
 gb.configure_column("Balance / Credit (PKR)", type=["numericColumn"], editable=False)
-gb.configure_column("Payment Status", cellEditor="agSelectCellEditor", cellEditorParams={"values": PAYMENT_OPTIONS}, editable=True)
-gb.configure_column("Contract Status", cellEditor="agSelectCellEditor", cellEditorParams={"values": CONTRACT_OPTIONS}, editable=True)
 
-# image renderer (show small thumbnail if path present)
+gb.configure_column("Payment Status", cellEditor="agSelectCellEditor",
+                    cellEditorParams={"values": PAYMENT_OPTIONS}, editable=True)
+
+gb.configure_column("Contract Status", cellEditor="agSelectCellEditor",
+                    cellEditorParams={"values": CONTRACT_OPTIONS}, editable=True)
+
+# Image thumbnail
 js_img = JsCode("""
-function(params) {
-  if(!params.value) return '';
-  let v = params.value;
-  // if looks like local path, create relative src
-  return `<a href="${v}" target="_blank"><img src="${v}" style="height:40px;border-radius:4px;"/></a>`;
+function(params){
+ if(!params.value) return '';
+ return `<a href="${params.value}" target="_blank">
+ <img src="${params.value}" style="height:40px;border-radius:4px;"/>
+ </a>`;
 }
 """)
-gb.configure_column("Billboard Image / Link", cellRenderer=js_img, editable=False, width=100)
+gb.configure_column("Billboard Image / Link", cellRenderer=js_img, editable=False, width=110)
 
-# row colors
+# Row alternate colors
 row_style_js = JsCode("""
-function(params) {
-  if (params.node.rowIndex % 2 === 0) {
-    return { 'background': '#e0e8ff' };
-  } else {
-    return { 'background': '#f0e8ff' };
-  }
+function(params){
+ if(params.node.rowIndex % 2 === 0){ return {'background':'#dbe4ff'}; }
+ else{ return {'background':'#e8dbff'}; }
 }
 """)
+
 gridOptions = gb.build()
 gridOptions["getRowStyle"] = row_style_js
 
-# ---------- Show AgGrid (single editable colored table) ----------
-st.header("🗂️ Billboard Table (Click a row to edit details)")
+# ---------- Display Table ----------
+st.header("🗂️ Billboard Table")
 response = AgGrid(
     display_df,
     gridOptions=gridOptions,
-    enable_enterprise_modules=False,
-    update_mode=GridUpdateMode.SELECTION_CHANGED | GridUpdateMode.MODEL_CHANGED,
-    fit_columns_on_grid_load=True,
+    update_mode=GridUpdateMode.MODEL_CHANGED | GridUpdateMode.SELECTION_CHANGED,
     allow_unsafe_jscode=True,
-    height=520,
+    fit_columns_on_grid_load=True,
+    height=520
 )
 
-# when user edits inline cells, update master df
+# ---------- Update df after inline edits ----------
 if response and response.get("data") is not None:
-    edited_display_df = pd.DataFrame(response["data"])
-    # Map back edits to session_state.df using S No.
+    edited_df = pd.DataFrame(response["data"])
     full = st.session_state.df.copy()
-    for _, r in edited_display_df.iterrows():
-        try:
-            sn = int(r["S No."])
-        except:
-            continue
+
+    for _, r in edited_df.iterrows():
+        sn = int(r["S No."])
         idx = full.index[full["S No."] == sn].tolist()
         if not idx:
             continue
         i = idx[0]
-        for col in edited_display_df.columns:
+        for col in edited_df.columns:
             if col in COLUMNS:
-                # update only editable columns and those present
                 full.at[i, col] = r[col]
+
     st.session_state.df = full
 
-# ---------- Selection handling: edit selected row with proper widgets ----------
+# ---------- Edit selected row ----------
 selected = response.get("selected_rows", [])
 if selected:
-    sel = selected[0]  # single selection
+    sel = selected[0]
     sno = int(sel["S No."])
-    st.sidebar.markdown(f"### ✏️ Editing Row S No.: {sno}")
-    # find index in full df
+
+    st.sidebar.markdown(f"### ✏️ Editing Row {sno}")
+
     full = st.session_state.df.copy()
     idx = full.index[full["S No."] == sno].tolist()[0]
 
-    # fields for edit (use proper widgets)
-    st.sidebar.text_input("Billboard ID", value=str(full.at[idx, "Billboard ID"]), key="e_billboard_id")
-    st.sidebar.text_input("Location / Address", value=str(full.at[idx, "Location / Address"]), key="e_location")
-    st.sidebar.text_input("Billboard Size", value=str(full.at[idx, "Billboard Size"]), key="e_size")
-    st.sidebar.text_input("Client Name", value=str(full.at[idx, "Client Name"]), key="e_client")
-    st.sidebar.text_input("Company Name", value=str(full.at[idx, "Company Name"]), key="e_company")
-    st.sidebar.text_input("Contact Number", value=str(full.at[idx, "Contact Number"]), key="e_contact")
-    st.sidebar.text_input("Email", value=str(full.at[idx, "Email"]), key="e_email")
+    st.sidebar.text_input("Billboard ID", full.at[idx, "Billboard ID"], key="e_bid")
+    st.sidebar.text_input("Location / Address", full.at[idx, "Location / Address"], key="e_loc")
+    st.sidebar.text_input("Billboard Size", full.at[idx, "Billboard Size"], key="e_size")
+    st.sidebar.text_input("Client Name", full.at[idx, "Client Name"], key="e_client")
+    st.sidebar.text_input("Company Name", full.at[idx, "Company Name"], key="e_company")
+    st.sidebar.text_input("Contact Number", full.at[idx, "Contact Number"], key="e_contact")
+    st.sidebar.text_input("Email", full.at[idx, "Email"], key="e_email")
 
     # Dates
-    # parse existing date safely
     def parse_dt(val):
         try:
             if pd.isna(val) or val == "":
-                return None
+                return date.today()
             if isinstance(val, pd.Timestamp):
                 return val.date()
-            # try parse string
             return pd.to_datetime(val, dayfirst=True).date()
         except:
-            return None
+            return date.today()
 
-    start_val = parse_dt(full.at[idx, "Contract Start Date"])
-    end_val = parse_dt(full.at[idx, "Contract End Date"])
-    start_date = st.sidebar.date_input("Contract Start Date", value=start_val if start_val else date.today(), key="e_start")
-    end_date = st.sidebar.date_input("Contract End Date", value=end_val if end_val else date.today(), key="e_end")
+    start_date = st.sidebar.date_input("Contract Start Date", parse_dt(full.at[idx, "Contract Start Date"]), key="e_start")
+    end_date = st.sidebar.date_input("Contract End Date", parse_dt(full.at[idx, "Contract End Date"]), key="e_end")
 
-    # numeric fields with validation
-    rent_val = safe_float(full.at[idx, "Rent Amount (PKR)"])
-    adv_val = safe_float(full.at[idx, "Advance Received (PKR)"])
-    rent = st.sidebar.number_input("Rent Amount (PKR)", value=rent_val, min_value=0.0, format="%.2f", key="e_rent")
-    adv = st.sidebar.number_input("Advance Received (PKR)", value=adv_val, min_value=0.0, format="%.2f", key="e_adv")
+    rent = st.sidebar.number_input("Rent Amount", safe_float(full.at[idx, "Rent Amount (PKR)"]), min_value=0.0, key="e_rent")
+    adv = st.sidebar.number_input("Advance Received", safe_float(full.at[idx, "Advance Received (PKR)"]), min_value=0.0, key="e_adv")
 
-    # dropdowns
-    pay_status = st.sidebar.selectbox("Payment Status", options=PAYMENT_OPTIONS, index=PAYMENT_OPTIONS.index(full.at[idx, "Payment Status"]) if full.at[idx, "Payment Status"] in PAYMENT_OPTIONS else 1, key="e_pay")
-    contract_status = st.sidebar.selectbox("Contract Status", options=CONTRACT_OPTIONS, index=CONTRACT_OPTIONS.index(full.at[idx, "Contract Status"]) if full.at[idx, "Contract Status"] in CONTRACT_OPTIONS else 2, key="e_contract")
+    pay_status = st.sidebar.selectbox("Payment Status", PAYMENT_OPTIONS, key="e_pay")
+    contract_status = st.sidebar.selectbox("Contract Status", CONTRACT_OPTIONS, key="e_contract")
 
-    remarks = st.sidebar.text_area("Remarks / Notes", value=str(full.at[idx, "Remarks / Notes"]), key="e_remarks")
-    partner_share = st.sidebar.text_input("Partner’s Share", value=str(full.at[idx, "Partner’s Share"]), key="e_partner")
+    remarks = st.sidebar.text_area("Remarks", full.at[idx, "Remarks / Notes"], key="e_rem")
+    partner_share = st.sidebar.text_input("Partner’s Share", full.at[idx, "Partner’s Share"], key="e_partner")
 
-   # --- Image Upload Section ---
-st.subheader("Upload Billboard Image")
+    # ---------- Image Upload ----------
+    st.sidebar.markdown("### 📸 Upload Image")
+    uploaded_image = st.sidebar.file_uploader("Upload Billboard Image", type=["jpg", "jpeg", "png"])
 
-uploaded_image = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
+    if uploaded_image:
+        img_name = f"billboard_{sno}_{uploaded_image.name}"
+        img_path = os.path.join(IMAGE_DIR, img_name)
 
-if uploaded_image is not None:
-    img_name = uploaded_image.name
-    fpath = os.path.join("images", img_name)
+        with open(img_path, "wb") as f:
+            f.write(uploaded_image.getbuffer())
 
-    # Save image
-    with open(fpath, "wb") as f:
-        f.write(uploaded_image.getbuffer())
+        full.at[idx, "Billboard Image / Link"] = img_path
+        st.session_state.df = full
+        st.sidebar.success("Image Saved!")
 
-    st.sidebar.success(f"Image saved: {fpath}")
-
-    # Preview image
-    st.image(fpath, caption="Uploaded Billboard Image", use_column_width=True)
-
+        st.sidebar.image(img_path, width=200)
 
