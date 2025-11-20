@@ -688,32 +688,40 @@ if selected:
 st.markdown("""
 <style>
 
-/* Excel-style FULL cell borders */
+/* Perfect Excel-like Table with clean borders */
 [data-testid="stStyledTable"] table {
     border-collapse: collapse !important;
     width: 100%;
+    font-size: 14px;
 }
 
-/* Every cell (row + column) gets full border */
+/* Full border around each cell */
 [data-testid="stStyledTable"] table th,
 [data-testid="stStyledTable"] table td {
-    border: 1px solid #000000 !important;  /* solid black border */
+    border: 1px solid #6B7280 !important;  /* Medium Gray Border */
     padding: 8px 10px !important;
 }
 
-/* Header styling */
+/* Header Styling */
 [data-testid="stStyledTable"] thead th {
-    background-color: #1E3A8A !important;  /* dark blue header */
-    color: white !important;
-    font-weight: bold !important;
+    background-color: #1E3A8A !important;  /* Dark Blue */
+    color: #FFFFFF !important;
+    font-weight: 600 !important;
+    text-align: left !important;
 }
 
-/* Alternate row colors */
+/* Row Colors - Balanced Professional */
 [data-testid="stStyledTable"] tbody tr:nth-child(odd) {
-    background-color: #F8F8F8 !important;
+    background-color: #F3F4F6 !important;  /* Light Gray */
 }
+
 [data-testid="stStyledTable"] tbody tr:nth-child(even) {
-    background-color: #EFEFEF !important;
+    background-color: #E5E7EB !important;  /* Slightly Darker Gray */
+}
+
+/* Hover Effect for better UX */
+[data-testid="stStyledTable"] tbody tr:hover {
+    background-color: #D1D5DB !important;  /* Medium Gray */
 }
 
 </style>
