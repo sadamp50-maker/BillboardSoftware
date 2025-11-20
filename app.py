@@ -688,51 +688,49 @@ if selected:
 st.markdown("""
 <style>
 
-/* --- FULL TABLE DARK BORDER --- */
+/* Table wrapper */
 [data-testid="stStyledTable"] table {
     border-collapse: separate !important;
     border-spacing: 0 !important;
     width: 100%;
-    font-size: 14px;
-    border: 3px solid #1f2937 !important;       /* DARK OUTER BORDER */
-    border-radius: 10px !important;
-    overflow: hidden;
-    box-shadow: 0 0 20px rgba(0,0,0,0.25);
 }
 
-/* --- EVERY CELL DARK BORDER --- */
-[data-testid="stStyledTable"] table th,
-[data-testid="stStyledTable"] table td {
-    border: 2px solid #111827 !important;       /* VERY DARK CELL BORDER */
-    padding: 8px 12px !important;
+/* All cells strong box borders */
+[data-testid="stStyledTable"] table td,
+[data-testid="stStyledTable"] table th {
+    border-top: 2px solid #1f2937 !important;
+    border-bottom: 2px solid #1f2937 !important;
+
+    /* IMPORTANT: Column borders */
+    border-left: 2px solid #1f2937 !important;
+    border-right: 2px solid #1f2937 !important;
+
+    padding: 8px 10px !important;
     background: white !important;
 }
 
-/* --- HEADER --- */
+/* Header styling */
 [data-testid="stStyledTable"] thead th {
     background-color: #111827 !important;
     color: white !important;
     font-weight: 700 !important;
-    text-align: left !important;
-    position: sticky !important;
-    top: 0;
-    z-index: 10;
-    border-bottom: 3px solid #000 !important;   /* Dark header line */
+    border-bottom: 3px solid black !important;
+
+    border-left: 2px solid #000 !important;
+    border-right: 2px solid #000 !important;
 }
 
-/* --- ROW COLORS (Not too light, not too dark) --- */
+/* Zebra rows */
 [data-testid="stStyledTable"] tbody tr:nth-child(odd) td {
     background-color: #e5e7eb !important;
 }
-
 [data-testid="stStyledTable"] tbody tr:nth-child(even) td {
     background-color: #d1d5db !important;
 }
 
-/* --- HOVER EFFECT --- */
+/* Hover */
 [data-testid="stStyledTable"] tbody tr:hover td {
-    background-color: #c7cdd3 !important;
-    transition: 0.18s ease-in-out;
+    background-color: #cdd2d6 !important;
 }
 
 </style>
