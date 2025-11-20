@@ -12,3 +12,8 @@ pandas
 streamlit-aggrid
 openpyxl
 pillow
+streamlit
+pandas
+streamlit-aggrid
+openpyxl
+pillow
