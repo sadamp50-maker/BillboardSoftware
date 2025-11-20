@@ -46,16 +46,11 @@ def load_initial_df():
     return df0
 
 def save_df_to_excel(df):
-    with BytesIO() as buffer:
-        with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
-            df.to_excel(writer, index=False, sheet_name="Billboards")
-            writer.save()
-        data = buffer.getvalue()
-    # save a copy to disk for autosave
-    with open(DATA_FILE, "wb") as f:
-        f.write(data)
-    return data
-
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine="openpyxl") as writer:
+        df.to_excel(writer, index=False, sheet_name="Dashboard")
+    processed_data = output.getvalue()
+    return processed_data
 def safe_float(x):
     try:
         if pd.isna(x) or x == "":
@@ -266,4 +261,5 @@ if uploaded_image is not None:
 
     # Preview image
     st.image(fpath, caption="Uploaded Billboard Image", use_column_width=True)
+
 
