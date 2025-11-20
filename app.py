@@ -249,15 +249,21 @@ if selected:
     remarks = st.sidebar.text_area("Remarks / Notes", value=str(full.at[idx, "Remarks / Notes"]), key="e_remarks")
     partner_share = st.sidebar.text_input("Partner’s Share", value=str(full.at[idx, "Partner’s Share"]), key="e_partner")
 
-    # Image upload for this selected S No.
-    st.sidebar.markdown("**Upload / Replace Billboard Image**")
-    uploaded_file = st.sidebar.file_uploader("Choose image (png/jpg):", type=["png", "jpg", "jpeg"], key=f"img_{sno}")
-  if uploaded_image is not None:
+   # --- Image Upload Section ---
+st.subheader("Upload Billboard Image")
+
+uploaded_image = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
+
+if uploaded_image is not None:
     img_name = uploaded_image.name
     fpath = os.path.join("images", img_name)
+
+    # Save image
     with open(fpath, "wb") as f:
         f.write(uploaded_image.getbuffer())
 
     st.sidebar.success(f"Image saved: {fpath}")
 
+    # Preview image
+    st.image(fpath, caption="Uploaded Billboard Image", use_column_width=True)
 
