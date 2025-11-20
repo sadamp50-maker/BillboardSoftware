@@ -445,18 +445,6 @@ st.download_button(
     file_name="Billboard_DB.csv",
     mime="text/csv"
 )
-
-st.markdown(
-    """
-    <style>
-        table, th, td {
-            border: 2px solid black !important;
-            border-collapse: collapse;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 st.markdown("""
     <style>
         table {
@@ -479,5 +467,6 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+
 
 
