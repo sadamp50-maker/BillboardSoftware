@@ -437,6 +437,7 @@ st.subheader("⬇️ Export current DB")
 excel_bytes = dataframe_to_excel_bytes(full_df)
 st.download_button("⬇️ Download Excel (.xlsx)", data=excel_bytes, file_name="Billboard_DB.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 csv_bytes = full_df.to_csv(index=False).encode("utf-8")
+
 st.download_button("⬇️ Download CSV", data=csv_bytes, file_name="Billboard_DB.csv", mime="text/csv")st.markdown(
     """
     <style>
@@ -489,4 +490,5 @@ st.download_button("⬇️ Download CSV", data=csv_bytes, file_name="Billboard_D
     """,
     unsafe_allow_html=True,
 )
+
 
