@@ -688,60 +688,65 @@ if selected:
 st.markdown("""
 <style>
 
-/* ------- TABLE BASE ------- */
+/* --- FULL TABLE BOX STYLE (BEST VERSION) --- */
 [data-testid="stStyledTable"] table {
     border-collapse: separate !important;
-    border-spacing: 0px !important;
+    border-spacing: 0 !important;
     width: 100%;
     font-size: 14px;
-    border-radius: 12px !important;
+    border: 2px solid #374151 !important;   
+    border-radius: 10px !important;
     overflow: hidden;
-    box-shadow: 0 0 15px rgba(0,0,0,0.15);
+    box-shadow: 0 0 18px rgba(0,0,0,0.25);
 }
 
-/* ------- CELL BORDERS ------- */
+/* --- EVERY CELL LOOKS LIKE A BOX --- */
 [data-testid="stStyledTable"] table th,
 [data-testid="stStyledTable"] table td {
-    border: 1px solid #9CA3AF !important;
-    padding: 8px 10px !important;
+    border: 1.5px solid #4B5563 !important;  
+    padding: 8px 12px !important;
+    background: white !important;
 }
 
-/* ------- HEADER STYLE ------- */
+/* --- HEADER STYLING --- */
 [data-testid="stStyledTable"] thead th {
-    background-color: #1E3A8A !important;  /* Dark Blue */
+    background-color: #1F2937 !important;
     color: white !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
     text-align: left !important;
     position: sticky !important;
     top: 0;
     z-index: 10;
+    border-bottom: 2px solid #111827 !important;
 }
 
-/* ------- ROW COLORS ------- */
-[data-testid="stStyledTable"] tbody tr:nth-child(odd) {
+/* --- ZEBRA ROWS --- */
+[data-testid="stStyledTable"] tbody tr:nth-child(odd) td {
     background-color: #F3F4F6 !important;
 }
 
-[data-testid="stStyledTable"] tbody tr:nth-child(even) {
+[data-testid="stStyledTable"] tbody tr:nth-child(even) td {
     background-color: #E5E7EB !important;
 }
 
-/* ------- HOVER EFFECT ------- */
-[data-testid="stStyledTable"] tbody tr:hover {
+/* --- HOVER EFFECT --- */
+[data-testid="stStyledTable"] tbody tr:hover td {
     background-color: #D1D5DB !important;
-    transition: 0.2s ease-in-out;
+    transition: 0.15s ease-in-out;
 }
 
-/* ------- COLUMN RESIZE (User Resize) ------- */
+/* --- COLUMN RESIZE --- */
 [data-testid="stStyledTable"] table th {
     resize: horizontal;
     overflow: auto;
 }
 
-/* ------- Smooth Scroll ------- */
+/* --- SMOOTH SCROLL --- */
 [data-testid="stHorizontalBlock"] {
     overflow-x: auto !important;
 }
 
 </style>
 """, unsafe_allow_html=True)
+
+
