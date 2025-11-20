@@ -1,35 +1,3 @@
-
-/* === FULL AGGRID ENHANCED BORDERS + WRAP + AUTO HEIGHT === */
-<style>
-.ag-header-cell-label {
-    white-space: normal !important;
-    text-overflow: clip !important;
-    overflow-wrap: break-word !important;
-    line-height: 1.2 !important;
-}
-
-.ag-cell {
-    white-space: normal !important;
-    overflow-wrap: break-word !important;
-    border-right: 2px solid #000 !important;
-    border-bottom: 2px solid #000 !important;
-}
-
-.ag-header-cell {
-    border-right: 2px solid #000 !important;
-    border-bottom: 2px solid #000 !important;
-}
-
-.ag-row {
-    border-bottom: 2px solid #000 !important;
-}
-
-.ag-center-cols-viewport, .ag-center-cols-container {
-    border-right: 2px solid #000 !important;
-}
-
-</style>
-
 # app.py
 import io
 import os
@@ -551,3 +519,15 @@ thead tr th {
 
 
 
+
+
+st.markdown(
+    """
+    <style>
+    .ag-root-wrapper { border: 2px solid #000 !important; }
+    .ag-header-cell-label { white-space: normal !important; text-overflow: clip !important; overflow: visible !important; }
+    .ag-cell, .ag-header-cell { border: 1px solid black !important; }
+    .ag-header { border-bottom: 2px solid black !important; }
+    .ag-center-cols-container { border-right: 2px solid black !important; }
+    </style>
+    """, unsafe_allow_html=True)
