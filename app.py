@@ -435,7 +435,9 @@ st.markdown(f"**Showing {len(df_filtered)} rows (filtered). Total rows in DB: {l
 
 st.subheader("⬇️ Export current DB")
 excel_bytes = dataframe_to_excel_bytes(full_df)
-st.download_button("⬇️ Download Excel (.xlsx)", data=excel_bytes, file_name="Billboard_DB.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+st.download_button(
+"⬇️ Download Excel (.xlsx)", data=excel_bytes,
+file_name="Billboard_DB.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 csv_bytes = full_df.to_csv(index=False).encode("utf-8")
 
 st.download_button("⬇️ Download CSV", data=csv_bytes, file_name="Billboard_DB.csv", mime="text/csv")st.markdown(
@@ -490,5 +492,6 @@ st.download_button("⬇️ Download CSV", data=csv_bytes, file_name="Billboard_D
     """,
     unsafe_allow_html=True,
 )
+
 
 
