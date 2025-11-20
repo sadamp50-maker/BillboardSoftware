@@ -437,4 +437,56 @@ st.subheader("⬇️ Export current DB")
 excel_bytes = dataframe_to_excel_bytes(full_df)
 st.download_button("⬇️ Download Excel (.xlsx)", data=excel_bytes, file_name="Billboard_DB.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 csv_bytes = full_df.to_csv(index=False).encode("utf-8")
-st.download_button("⬇️ Download CSV", data=csv_bytes, file_name="Billboard_DB.csv", mime="text/csv")
+st.download_button("⬇️ Download CSV", data=csv_bytes, file_name="Billboard_DB.csv", mime="text/csv")st.markdown(
+    """
+    <style>
+
+    /* پُورا گرڈ کے ارد گرد باڈر */
+    .ag-root-wrapper {
+        border: 2px solid #000 !important;
+        border-radius: 6px !important;
+        overflow: hidden !important;
+    }
+
+    /* ہر ہِیڈر سیل کا ڈارک باڈر */
+    .ag-header-cell {
+        border-right: 1.5px solid #000 !important;
+        border-bottom: 2px solid #000 !important;
+        background: #1e293b !important;
+        color: white !important;
+        font-weight: 700 !important;
+    }
+
+    /* ہر ڈیٹا سیل میں مکمل باڈر (row + column دونوں) */
+    .ag-cell {
+        border-right: 1.5px solid #000 !important;
+        border-bottom: 1.5px solid #000 !important;
+        border-left: 1.5px solid #000 !important;
+        border-top: 1.5px solid #000 !important;
+    }
+
+    /* پہلی Row کے اوپر لائن نظر آئے */
+    .ag-row:first-child .ag-cell {
+        border-top: 1.8px solid #000 !important;
+    }
+
+    /* آخری Row کے نیچے لائن */
+    .ag-row-last .ag-cell {
+        border-bottom: 2px solid #000 !important;
+    }
+
+    /* Column کے آخر میں بھی لائن */
+    .ag-center-cols-container {
+        border-right: 2px solid #000 !important;
+    }
+
+    /* تھوڑا Hover ایفیکٹ */
+    .ag-row:hover .ag-cell {
+        background: #f1f5f9 !important;
+    }
+
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
