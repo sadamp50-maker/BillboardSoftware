@@ -688,40 +688,59 @@ if selected:
 st.markdown("""
 <style>
 
-/* Perfect Excel-like Table with clean borders */
+/* ------- TABLE BASE ------- */
 [data-testid="stStyledTable"] table {
-    border-collapse: collapse !important;
+    border-collapse: separate !important;
+    border-spacing: 0px !important;
     width: 100%;
     font-size: 14px;
+    border-radius: 12px !important;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0,0,0,0.15);
 }
 
-/* Full border around each cell */
+/* ------- CELL BORDERS ------- */
 [data-testid="stStyledTable"] table th,
 [data-testid="stStyledTable"] table td {
-    border: 1px solid #6B7280 !important;  /* Medium Gray Border */
+    border: 1px solid #9CA3AF !important;
     padding: 8px 10px !important;
 }
 
-/* Header Styling */
+/* ------- HEADER STYLE ------- */
 [data-testid="stStyledTable"] thead th {
     background-color: #1E3A8A !important;  /* Dark Blue */
-    color: #FFFFFF !important;
+    color: white !important;
     font-weight: 600 !important;
     text-align: left !important;
+    position: sticky !important;
+    top: 0;
+    z-index: 10;
 }
 
-/* Row Colors - Balanced Professional */
+/* ------- ROW COLORS ------- */
 [data-testid="stStyledTable"] tbody tr:nth-child(odd) {
-    background-color: #F3F4F6 !important;  /* Light Gray */
+    background-color: #F3F4F6 !important;
 }
 
 [data-testid="stStyledTable"] tbody tr:nth-child(even) {
-    background-color: #E5E7EB !important;  /* Slightly Darker Gray */
+    background-color: #E5E7EB !important;
 }
 
-/* Hover Effect for better UX */
+/* ------- HOVER EFFECT ------- */
 [data-testid="stStyledTable"] tbody tr:hover {
-    background-color: #D1D5DB !important;  /* Medium Gray */
+    background-color: #D1D5DB !important;
+    transition: 0.2s ease-in-out;
+}
+
+/* ------- COLUMN RESIZE (User Resize) ------- */
+[data-testid="stStyledTable"] table th {
+    resize: horizontal;
+    overflow: auto;
+}
+
+/* ------- Smooth Scroll ------- */
+[data-testid="stHorizontalBlock"] {
+    overflow-x: auto !important;
 }
 
 </style>
