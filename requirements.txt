@@ -3,3 +3,7 @@ pandas
 streamlit
 pandas
 openpyxl
+streamlit
+pandas
+streamlit-aggrid
+openpyxl
