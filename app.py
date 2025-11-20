@@ -716,8 +716,8 @@ st.markdown("""
     font-weight: 700 !important;
     border-bottom: 3px solid black !important;
 
-    border-left: 2px solid #000 !important;
-    border-right: 2px solid #000 !important;
+    border-left: 2px solid black !important;
+    border-right: 2px solid black !important;
 }
 
 /* Zebra rows */
@@ -735,3 +735,4 @@ st.markdown("""
 
 </style>
 """, unsafe_allow_html=True)
+
