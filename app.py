@@ -1,3 +1,35 @@
+
+/* === FULL AGGRID ENHANCED BORDERS + WRAP + AUTO HEIGHT === */
+<style>
+.ag-header-cell-label {
+    white-space: normal !important;
+    text-overflow: clip !important;
+    overflow-wrap: break-word !important;
+    line-height: 1.2 !important;
+}
+
+.ag-cell {
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    border-right: 2px solid #000 !important;
+    border-bottom: 2px solid #000 !important;
+}
+
+.ag-header-cell {
+    border-right: 2px solid #000 !important;
+    border-bottom: 2px solid #000 !important;
+}
+
+.ag-row {
+    border-bottom: 2px solid #000 !important;
+}
+
+.ag-center-cols-viewport, .ag-center-cols-container {
+    border-right: 2px solid #000 !important;
+}
+
+</style>
+
 # app.py
 import io
 import os
@@ -213,16 +245,6 @@ st.markdown(
         border-radius: 8px !important;
         overflow: hidden !important;
         box-shadow: 0 6px 18px rgba(2,6,23,0.25);
-    }
-
-    
-    /* Force header text to wrap */
-    .ag-header-cell-label {
-        white-space: normal !important;
-        line-height: 1.2 !important;
-        height: auto !important;
-        padding: 4px !important;
-        text-overflow: clip !important;
     }
 
     /* Header cells */
