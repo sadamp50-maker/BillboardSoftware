@@ -384,19 +384,28 @@ if selected:
 
         pay_status = st.sidebar.selectbox("Payment Status", options=PAYMENT_OPTIONS, index=PAYMENT_OPTIONS.index(row.get("Payment Status")) if row.get("Payment Status") in PAYMENT_OPTIONS else 1, key="e_pay")
         # ... previous code unchanged ...
+# ---------- Payment, Contract status and Remarks (fixed) ----------
+pay_status = st.sidebar.selectbox(
+    "Payment Status",
+    PAYMENT_OPTIONS,
+    index=PAYMENT_OPTIONS.index(row.get("Payment Status")) if row.get("Payment Status") in PAYMENT_OPTIONS else 0,
+    key=f"e_pay_{sno}",
+)
 
-        pay_status = st.sidebar.selectbox(
-            "Payment Status",
-            options=PAYMENT_OPTIONS,
-            index=PAYMENT_OPTIONS.index(row.get("Payment Status")) if row.get("Payment Status") in PAYMENT_OPTIONS else 1,
-            key=f"e_payment_{sno}",
-        )
-        contract_status = st.sidebar.selectbox(
-            "Contract Status",
-            options=CONTRACT_OPTIONS,
-            index=CONTRACT_OPTIONS.index(row.get("Contract Status")) if row.get("Contract Status") in CONTRACT_OPTIONS else 1,
-            key=f"e_contract_{sno}",
-        )
+contract_status = st.sidebar.selectbox(
+    "Contract Status",
+    CONTRACT_OPTIONS,
+    index=CONTRACT_OPTIONS.index(row.get("Contract Status")) if row.get("Contract Status") in CONTRACT_OPTIONS else 0,
+    key=f"e_contract_{sno}",
+)
+
+# Remarks field (added because 'remarks' is used later when saving)
+remarks = st.sidebar.text_area(
+    "Remarks / Notes",
+    value=row.get("Remarks / Notes", ""),
+    key=f"e_remarks_{sno}"
+)
+# ------------------------------------------------------------------
 
 # ... rest of file unchanged ...
         partner_share = st.sidebar.text_input("Partner’s Share", value=row.get("Partner’s Share", ""), key="e_partner")
@@ -544,4 +553,5 @@ st.markdown(
     .ag-center-cols-container { border-right: 2px solid black !important; }
     </style>
     """, unsafe_allow_html=True)
+
 
