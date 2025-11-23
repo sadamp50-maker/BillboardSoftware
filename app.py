@@ -188,7 +188,7 @@ function(params) {
 
 gb.configure_column("Billboard Image / Link", cellRenderer=js_img, editable=False, width=120)
 
-row_style_js = JsCode(\"\"\"
+row_style_js = JsCode("""
 function(params) {
   if (params.node.rowIndex % 2 === 0) {
     return { 'background': '#f8fafc' };
@@ -389,6 +389,7 @@ st.download_button(
     file_name="Billboard_DB.csv",
     mime="text/csv"
 )
+
 
 
 
