@@ -177,13 +177,15 @@ gb.configure_column("Payment Status", cellEditor="agSelectCellEditor",
 gb.configure_column("Contract Status", cellEditor="agSelectCellEditor",
                     cellEditorParams={"values": CONTRACT_OPTIONS}, editable=True)
 
-js_img = JsCode(\"\"\"
+js_img = JsCode("""
 function(params) {
     if(!params.value) return '';
     try {
         return '<a href="'+params.value+'" target="_blank"><img src="'+params.value+'" style="height:40px;border-radius:4px;"/></a>';
     } catch(e) { return params.value; }
 }
+""")
+
 \"\"\")
 gb.configure_column("Billboard Image / Link", cellRenderer=js_img, editable=False, width=120)
 
@@ -388,3 +390,4 @@ st.download_button(
     file_name="Billboard_DB.csv",
     mime="text/csv"
 )
+
