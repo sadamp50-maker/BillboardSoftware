@@ -207,7 +207,7 @@ response = AgGrid(
     df_filtered,
     gridOptions=gridOptions,
     enable_enterprise_modules=False,
-    update_mode=GridUpdateMode.SELECTION_CHANGED,
+    update_mode=GridUpdateMode.NO_UPDATE
     fit_columns_on_grid_load=True,
     allow_unsafe_jscode=True,
     height=540,
@@ -297,8 +297,16 @@ if selected:
         start_date = st.sidebar.date_input("Contract Start Date", value=parse_dt_for_widget(row.get("Contract Start Date", "")), key=f"start_{sno}")
         end_date = st.sidebar.date_input("Contract End Date", value=parse_dt_for_widget(row.get("Contract End Date", "")), key=f"end_{sno}")
 
-        rent = st.sidebar.number_input("Rent Amount (PKR)", value=rent_val, min_value=0.0, format="%.2f", key=f"rent_{sno}")
-        adv = st.sidebar.number_input("Advance Received (PKR)", value=adv_val, min_value=0.0, format="%.2f", key=f"adv_{sno}")
+        rent = st.sidebar.number_input("Rent Amount (PKR)",
+                               value=st.session_state[f"rent_{sno}"],
+                               min_value=0.0, format="%.2f",
+                               key=f"rent_{sno}")
+
+        adv = st.sidebar.number_input("Advance Received (PKR)",
+                              value=st.session_state[f"adv_{sno}"],
+                              min_value=0.0, format="%.2f",
+                              key=f"adv_{sno}")
+
 
         pay_status = st.sidebar.selectbox("Payment Status", PAYMENT_OPTIONS,
                                   index=PAYMENT_OPTIONS.index(row.get("Payment Status")) if row.get("Payment Status") in PAYMENT_OPTIONS else 0,
@@ -392,6 +400,7 @@ st.download_button(
     file_name="Billboard_DB.csv",
     mime="text/csv"
 )
+
 
 
 
