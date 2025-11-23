@@ -407,30 +407,41 @@ remarks = st.sidebar.text_area(
 )
 # ------------------------------------------------------------------
 
-# ... rest of file unchanged ...
-rent = st.sidebar.number_input("Rent", value=row.get("Rent", 0), key="e_rent")
-adv = st.sidebar.number_input("Advance", value=row.get("Advance", 0), key="e_adv")
+    # Partner Share
+    partner_share = st.sidebar.text_input(
+        "Partner’s Share",
+        value=row.get("Partner’s Share", ""),
+        key=f"e_partner_{sno}",
+    )
 
-partner_share = st.sidebar.text_input(
-    "Partner’s Share",
-    value=row.get("Partner’s Share", ""),
-    key=f"e_partner_{sno}",
-)
-        # image upload
-st.sidebar.markdown("### 📸 Upload / Replace Image")
-uploaded_file = st.sidebar.file_uploader("Choose image (png/jpg):", type=["png", "jpg", "jpeg"], key=f"img_{sno}")
-fpath = None
+    # image upload
+    st.sidebar.markdown("### 📸 Upload / Replace Image")
+    uploaded_file = st.sidebar.file_uploader(
+        "Choose image (png/jpg):",
+        type=["png", "jpg", "jpeg"],
+        key=f"img_{sno}"
+    )
+    fpath = None
+
     if uploaded_file is not None:
-            ext = os.path.splitext(uploaded_file.name)[1]
-            fname = f"sno_{sno}{ext}"
-            fpath = os.path.join(IMAGE_DIR, fname)
-            with open(fpath, "wb") as f:
-                f.write(uploaded_file.getbuffer())
-            st.sidebar.success(f"Image saved: {fpath}")
-            try:
-                st.sidebar.image(fpath, use_column_width=True)
-            except:
-                st.sidebar.write("Saved image but preview failed.")
+        ext = os.path.splitext(uploaded_file.name)[1]
+        fname = f"sno_{sno}{ext}"
+        fpath = os.path.join(IMAGE_DIR, fname)
+        with open(fpath, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        st.sidebar.success(f"Image saved: {fpath}")
+        try:
+            st.sidebar.image(fpath, use_column_width=True)
+        except:
+            st.sidebar.write("Saved image but preview failed.")
+
+    # show existing image preview if present
+    existing_img = row.get("Billboard Image / Link", "")
+    if isinstance(existing_img, str) and existing_img and os.path.exists(existing_img):
+        try:
+            st.sidebar.image(existing_img, caption="Existing Image", use_column_width=True)
+        except:
+            st.sidebar.write("Image path exists but preview failed.")
 
         # show existing image preview if present
         existing_img = row.get("Billboard Image / Link", "")
@@ -559,6 +570,7 @@ st.markdown(
     .ag-center-cols-container { border-right: 2px solid black !important; }
     </style>
     """, unsafe_allow_html=True)
+
 
 
 
