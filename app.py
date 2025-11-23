@@ -186,7 +186,7 @@ function(params) {
 }
 """)
 
-\"\"\")
+\""")
 gb.configure_column("Billboard Image / Link", cellRenderer=js_img, editable=False, width=120)
 
 row_style_js = JsCode(\"\"\"
@@ -197,7 +197,7 @@ function(params) {
     return { 'background': '#eef2ff' };
   }
 }
-\"\"\")
+""")
 gridOptions = gb.build()
 gridOptions["getRowStyle"] = row_style_js
 
@@ -390,4 +390,5 @@ st.download_button(
     file_name="Billboard_DB.csv",
     mime="text/csv"
 )
+
 
