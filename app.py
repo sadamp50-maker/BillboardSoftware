@@ -207,7 +207,7 @@ response = AgGrid(
     df_filtered,
     gridOptions=gridOptions,
     enable_enterprise_modules=False,
-    update_mode=GridUpdateMode.MODEL_CHANGED | GridUpdateMode.SELECTION_CHANGED,
+    update_mode=GridUpdateMode.SELECTION_CHANGED,
     fit_columns_on_grid_load=True,
     allow_unsafe_jscode=True,
     height=540,
@@ -275,13 +275,13 @@ if selected:
         init_state(f"imgpath_{sno}", row.get("Billboard Image / Link", ""))
 
         # Sidebar inputs bind to session_state keys (prevents losing typed text on rerun)
-        bid = st.sidebar.text_input("Billboard ID", key=f"bid_{sno}")
-        loc = st.sidebar.text_input("Location / Address", key=f"loc_{sno}")
-        size = st.sidebar.text_input("Billboard Size", key=f"size_{sno}")
-        client = st.sidebar.text_input("Client Name", key=f"client_{sno}")
-        company = st.sidebar.text_input("Company Name", key=f"company_{sno}")
-        contact = st.sidebar.text_input("Contact Number", key=f"contact_{sno}")
-        email = st.sidebar.text_input("Email", key=f"email_{sno}")
+        bid = st.sidebar.text_input("Billboard ID", value=row.get("Billboard ID", ""), key=f"bid_{sno}")
+        loc = st.sidebar.text_input("Location / Address", value=row.get("Location / Address", ""), key=f"loc_{sno}")
+        size = st.sidebar.text_input("Billboard Size", value=row.get("Billboard Size", ""), key=f"size_{sno}")
+        client = st.sidebar.text_input("Client Name", value=row.get("Client Name", ""), key=f"client_{sno}")
+        company = st.sidebar.text_input("Company Name", value=row.get("Company Name", ""), key=f"company_{sno}")
+        contact = st.sidebar.text_input("Contact Number", value=row.get("Contact Number", ""), key=f"contact_{sno}")
+        email = st.sidebar.text_input("Email", value=row.get("Email", ""), key=f"email_{sno}")
 
         # date inputs
         def parse_dt_for_widget(v):
@@ -294,18 +294,21 @@ if selected:
             except:
                 return date.today()
 
-        start_date = st.sidebar.date_input("Contract Start Date", value=parse_dt_for_widget(st.session_state[f"start_{sno}"]), key=f"start_{sno}")
-        end_date = st.sidebar.date_input("Contract End Date", value=parse_dt_for_widget(st.session_state[f"end_{sno}"]), key=f"end_{sno}")
+        start_date = st.sidebar.date_input("Contract Start Date", value=parse_dt_for_widget(row.get("Contract Start Date", "")), key=f"start_{sno}")
+        end_date = st.sidebar.date_input("Contract End Date", value=parse_dt_for_widget(row.get("Contract End Date", "")), key=f"end_{sno}")
 
-        rent = st.sidebar.number_input("Rent Amount (PKR)", value=st.session_state[f"rent_{sno}"], min_value=0.0, format="%.2f", key=f"rent_{sno}")
-        adv = st.sidebar.number_input("Advance Received (PKR)", value=st.session_state[f"adv_{sno}"], min_value=0.0, format="%.2f", key=f"adv_{sno}")
+        rent = st.sidebar.number_input("Rent Amount (PKR)", value=rent_val, min_value=0.0, format="%.2f", key=f"rent_{sno}")
+        adv = st.sidebar.number_input("Advance Received (PKR)", value=adv_val, min_value=0.0, format="%.2f", key=f"adv_{sno}")
 
-        pay_status = st.sidebar.selectbox("Payment Status", PAYMENT_OPTIONS, index=PAYMENT_OPTIONS.index(st.session_state[f"pay_{sno}"]) if st.session_state[f"pay_{sno}"] in PAYMENT_OPTIONS else 0, key=f"pay_{sno}")
-        contract_status = st.sidebar.selectbox("Contract Status", CONTRACT_OPTIONS, index=CONTRACT_OPTIONS.index(st.session_state[f"contract_{sno}"]) if st.session_state[f"contract_{sno}"] in CONTRACT_OPTIONS else 0, key=f"contract_{sno}")
-
-        remarks = st.sidebar.text_area("Remarks / Notes", value=st.session_state[f"remarks_{sno}"], key=f"remarks_{sno}")
-        partner_share = st.sidebar.text_input("Partner’s Share", value=st.session_state[f"partner_{sno}"], key=f"partner_{sno}")
-
+        pay_status = st.sidebar.selectbox("Payment Status", PAYMENT_OPTIONS,
+                                  index=PAYMENT_OPTIONS.index(row.get("Payment Status")) if row.get("Payment Status") in PAYMENT_OPTIONS else 0,
+                                  key=f"pay_{sno}")
+        contract_status = st.sidebar.selectbox("Contract Status", CONTRACT_OPTIONS,
+                                       index=CONTRACT_OPTIONS.index(row.get("Contract Status")) if row.get("Contract Status") in CONTRACT_OPTIONS else 0,
+                                       key=f"contract_{sno}")
+        remarks = st.sidebar.text_area("Remarks / Notes", value=row.get("Remarks / Notes", ""), key=f"remarks_{sno}")
+        partner_share = st.sidebar.text_input("Partner’s Share", value=row.get("Partner’s Share", ""), key=f"partner_{sno}")
+        
         st.sidebar.markdown("### 📸 Upload / Replace Image")
         uploaded_file = st.sidebar.file_uploader("Choose image (png/jpg):", type=["png", "jpg", "jpeg"], key=f"img_{sno}")
 
@@ -389,6 +392,7 @@ st.download_button(
     file_name="Billboard_DB.csv",
     mime="text/csv"
 )
+
 
 
 
