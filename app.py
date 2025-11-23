@@ -408,8 +408,14 @@ remarks = st.sidebar.text_area(
 # ------------------------------------------------------------------
 
 # ... rest of file unchanged ...
-        partner_share = st.sidebar.text_input("Partner’s Share", value=row.get("Partner’s Share", ""), key="e_partner")
+      rent = st.sidebar.number_input("Rent", value=row.get("Rent", 0), key="e_rent")
+adv = st.sidebar.number_input("Advance", value=row.get("Advance", 0), key="e_adv")
 
+partner_share = st.sidebar.text_input(
+    "Partner’s Share",
+    value=row.get("Partner’s Share", ""),
+    key=f"e_partner_{sno}",
+)
         # image upload
         st.sidebar.markdown("### 📸 Upload / Replace Image")
         uploaded_file = st.sidebar.file_uploader("Choose image (png/jpg):", type=["png", "jpg", "jpeg"], key=f"img_{sno}")
@@ -553,5 +559,6 @@ st.markdown(
     .ag-center-cols-container { border-right: 2px solid black !important; }
     </style>
     """, unsafe_allow_html=True)
+
 
 
