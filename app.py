@@ -355,13 +355,13 @@ if selected:
         row = full_row.iloc[0].to_dict()
 
         # Editable fields in sidebar
-        bid = st.sidebar.text_input("Billboard ID", value=row.get("Billboard ID", ""), key="e_bid")
-        loc = st.sidebar.text_input("Location / Address", value=row.get("Location / Address", ""), key="e_loc")
-        size = st.sidebar.text_input("Billboard Size", value=row.get("Billboard Size", ""), key="e_size")
-        client = st.sidebar.text_input("Client Name", value=row.get("Client Name", ""), key="e_client")
-        company = st.sidebar.text_input("Company Name", value=row.get("Company Name", ""), key="e_company")
-        contact = st.sidebar.text_input("Contact Number", value=row.get("Contact Number", ""), key="e_contact")
-        email = st.sidebar.text_input("Email", value=row.get("Email", ""), key="e_email")
+        bid = st.sidebar.text_input("Billboard ID", value=row.get("Billboard ID", ""), key=f"e_bid_{sno}")
+        loc = st.sidebar.text_input("Location / Address", value=row.get("Location / Address", ""), key=f"e_loc_{sno}")
+        size = st.sidebar.text_input("Billboard Size", value=row.get("Billboard Size", ""), key=f"e_size_{sno}")
+        client = st.sidebar.text_input("Client Name", value=row.get("Client Name", ""), key=f"e_client_{sno}")
+        company = st.sidebar.text_input("Company Name", value=row.get("Company Name", ""), key=f"e_company_{sno}")
+        contact = st.sidebar.text_input("Contact Number", value=row.get("Contact Number", ""), key=f"e_contact_{sno}")
+        email = st.sidebar.text_input("Email", value=row.get("Email", ""), key=f"e_email_{sno}")
 
         # date helper
         def parse_dt_for_widget(v):
@@ -374,157 +374,155 @@ if selected:
             except:
                 return date.today()
 
-        start_date = st.sidebar.date_input("Contract Start Date", value=parse_dt_for_widget(row.get("Contract Start Date", "")), key="e_start")
-        end_date = st.sidebar.date_input("Contract End Date", value=parse_dt_for_widget(row.get("Contract End Date", "")), key="e_end")
+        start_date = st.sidebar.date_input("Contract Start Date", value=parse_dt_for_widget(row.get("Contract Start Date", "")), key=f"e_start_{sno}")
+        end_date = st.sidebar.date_input("Contract End Date", value=parse_dt_for_widget(row.get("Contract End Date", "")), key=f"e_end_{sno}")
 
         rent_val = safe_float(row.get("Rent Amount (PKR)", "0"))
         adv_val = safe_float(row.get("Advance Received (PKR)", "0"))
-        rent = st.sidebar.number_input("Rent Amount (PKR)", value=rent_val, min_value=0.0, format="%.2f", key="e_rent")
-        adv = st.sidebar.number_input("Advance Received (PKR)", value=adv_val, min_value=0.0, format="%.2f", key="e_adv")
+        rent = st.sidebar.number_input("Rent Amount (PKR)", value=rent_val, min_value=0.0, format="%.2f", key=f"e_rent_{sno}")
+        adv = st.sidebar.number_input("Advance Received (PKR)", value=adv_val, min_value=0.0, format="%.2f", key=f"e_adv_{sno}")
 
-        pay_status = st.sidebar.selectbox("Payment Status", options=PAYMENT_OPTIONS, index=PAYMENT_OPTIONS.index(row.get("Payment Status")) if row.get("Payment Status") in PAYMENT_OPTIONS else 1, key="e_pay")
-        # ... previous code unchanged ...
-# ---------- Payment, Contract status and Remarks (fixed) ----------
-pay_status = st.sidebar.selectbox(
-    "Payment Status",
-    PAYMENT_OPTIONS,
-    index=PAYMENT_OPTIONS.index(row.get("Payment Status")) if row.get("Payment Status") in PAYMENT_OPTIONS else 0,
-    key=f"e_pay_{sno}",
-)
+        # Payment & Contract status (single, inside block)
+        pay_status = st.sidebar.selectbox(
+            "Payment Status",
+            PAYMENT_OPTIONS,
+            index=PAYMENT_OPTIONS.index(row.get("Payment Status")) if row.get("Payment Status") in PAYMENT_OPTIONS else 0,
+            key=f"e_pay_{sno}"
+        )
 
-contract_status = st.sidebar.selectbox(
-    "Contract Status",
-    CONTRACT_OPTIONS,
-    index=CONTRACT_OPTIONS.index(row.get("Contract Status")) if row.get("Contract Status") in CONTRACT_OPTIONS else 0,
-    key=f"e_contract_{sno}",
-)
-# Remarks field (added because 'remarks' is used later when saving)
-remarks = st.sidebar.text_area(
-    "Remarks / Notes",
-    value=row.get("Remarks / Notes", ""),
-    key=f"e_remarks_{sno}"
-)
-# ------------------------------------------------------------------
+        contract_status = st.sidebar.selectbox(
+            "Contract Status",
+            CONTRACT_OPTIONS,
+            index=CONTRACT_OPTIONS.index(row.get("Contract Status")) if row.get("Contract Status") in CONTRACT_OPTIONS else 0,
+            key=f"e_contract_{sno}"
+        )
 
-# Partner Share
-partner_share = st.sidebar.text_input(
-    "Partner’s Share",
-    value=row.get("Partner’s Share", ""),
-    key=f"e_partner_{sno}",
-)
+        # Remarks field (added because 'remarks' is used later when saving)
+        remarks = st.sidebar.text_area(
+            "Remarks / Notes",
+            value=row.get("Remarks / Notes", ""),
+            key=f"e_remarks_{sno}"
+        )
 
-# image upload
-st.sidebar.markdown("### 📸 Upload / Replace Image")
-uploaded_file = st.sidebar.file_uploader(
-    "Choose image (png/jpg):",
-    type=["png", "jpg", "jpeg"],
-    key=f"img_{sno}"
-)
+        # Partner Share
+        partner_share = st.sidebar.text_input(
+            "Partner’s Share",
+            value=row.get("Partner’s Share", ""),
+            key=f"e_partner_{sno}",
+        )
 
-fpath = None
+        # image upload
+        st.sidebar.markdown("### 📸 Upload / Replace Image")
+        uploaded_file = st.sidebar.file_uploader(
+            "Choose image (png/jpg):",
+            type=["png", "jpg", "jpeg"],
+            key=f"img_{sno}"
+        )
 
-if uploaded_file is not None:
-    ext = os.path.splitext(uploaded_file.name)[1]
-    fname = f"sno_{sno}{ext}"
-    fpath = os.path.join(IMAGE_DIR, fname)
-    with open(fpath, "wb") as f:
-        f.write(uploaded_file.getbuffer())
-    st.sidebar.success(f"Image saved: {fpath}")
-    try:
-        st.sidebar.image(fpath, use_column_width=True)
-    except:
-        st.sidebar.write("Saved image but preview failed.")
+        fpath = None
 
-# show existing image preview if present
-existing_img = row.get("Billboard Image / Link", "")
-if isinstance(existing_img, str) and existing_img and os.path.exists(existing_img):
-    try:
-        st.sidebar.image(existing_img, caption="Existing Image", use_column_width=True)
-    except:
-        st.sidebar.write("Image path exists but preview failed.")
+        if uploaded_file is not None:
+            ext = os.path.splitext(uploaded_file.name)[1]
+            fname = f"sno_{sno}{ext}"
+            fpath = os.path.join(IMAGE_DIR, fname)
+            with open(fpath, "wb") as f:
+                f.write(uploaded_file.getbuffer())
+            st.sidebar.success(f"Image saved: {fpath}")
+            try:
+                st.sidebar.image(fpath, use_column_width=True)
+            except:
+                st.sidebar.write("Saved image but preview failed.")
 
-if st.sidebar.button("Apply changes"):
-    new_row = {col: "" for col in COLUMNS}
-    new_row["S No."] = str(sno)
-    new_row["Billboard ID"] = bid
-    new_row["Location / Address"] = loc
-    new_row["Billboard Size"] = size
-    new_row["Client Name"] = client
-    new_row["Company Name"] = company
-    new_row["Contact Number"] = contact
-    new_row["Email"] = email
-    new_row["Contract Start Date"] = str(start_date)
-    new_row["Contract End Date"] = str(end_date)
-    new_row["Rental Duration"] = row.get("Rental Duration", "")
-    new_row["Rent Amount (PKR)"] = str(round(rent, 2))
-    new_row["Advance Received (PKR)"] = str(round(adv, 2))
-    new_row["Balance / Credit (PKR)"] = str(round(rent - adv, 2))
-    new_row["Payment Status"] = pay_status
-    new_row["Contract Status"] = contract_status
-    new_row["Days Remaining"] = str(calc_days_remaining(str(end_date)))
-    new_row["Remarks / Notes"] = remarks
-    new_row["Partner’s Share"] = partner_share
+        # show existing image preview if present
+        existing_img = row.get("Billboard Image / Link", "")
+        if isinstance(existing_img, str) and existing_img and os.path.exists(existing_img):
+            try:
+                st.sidebar.image(existing_img, caption="Existing Image", use_column_width=True)
+            except:
+                st.sidebar.write("Image path exists but preview failed.")
 
-    if fpath:
-        new_row["Billboard Image / Link"] = fpath
-    else:
-        new_row["Billboard Image / Link"] = row.get("Billboard Image / Link", "")
-    save_row_to_db(new_row)
-    st.sidebar.success("Row updated and saved to database.")
+        if st.sidebar.button("Apply changes"):
+            new_row = {col: "" for col in COLUMNS}
+            new_row["S No."] = str(sno)
+            new_row["Billboard ID"] = bid
+            new_row["Location / Address"] = loc
+            new_row["Billboard Size"] = size
+            new_row["Client Name"] = client
+            new_row["Company Name"] = company
+            new_row["Contact Number"] = contact
+            new_row["Email"] = email
+            new_row["Contract Start Date"] = str(start_date)
+            new_row["Contract End Date"] = str(end_date)
+            new_row["Rental Duration"] = row.get("Rental Duration", "")
+            new_row["Rent Amount (PKR)"] = str(round(rent, 2))
+            new_row["Advance Received (PKR)"] = str(round(adv, 2))
+            new_row["Balance / Credit (PKR)"] = str(round(rent - adv, 2))
+            new_row["Payment Status"] = pay_status
+            new_row["Contract Status"] = contract_status
+            new_row["Days Remaining"] = str(calc_days_remaining(str(end_date)))
+            new_row["Remarks / Notes"] = remarks
+            new_row["Partner’s Share"] = partner_share
 
-    # refresh main display
-    df_raw = load_df_from_db()
-    df_raw["_rowid_"] = df_raw["_rowid_"].astype(int)
-    display_df = df_raw.drop(columns=["_rowid_"]).copy()
+            if fpath:
+                new_row["Billboard Image / Link"] = fpath
+            else:
+                new_row["Billboard Image / Link"] = row.get("Billboard Image / Link", "")
+            save_row_to_db(new_row)
+            st.sidebar.success("Row updated and saved to database.")
 
-    df_filtered = display_df.copy()
+            # refresh main display
+            df_raw = load_df_from_db()
+            df_raw["_rowid_"] = df_raw["_rowid_"].astype(int)
+            display_df = df_raw.drop(columns=["_rowid_"]).copy()
 
-    # search filter
-    if search_q:
-        mask = df_filtered.astype(str).apply(
-            lambda r: r.str.contains(search_q, case=False, na=False)
-        ).any(axis=1)
-        df_filtered = df_filtered[mask]
+            df_filtered = display_df.copy()
 
-    # client filter
-    if client_filter:
-        df_filtered = df_filtered[
-            df_filtered["Client Name"].astype(str).str.contains(
-                client_filter, case=False, na=False
-            )
-        ]
+            # search filter
+            if search_q:
+                mask = df_filtered.astype(str).apply(
+                    lambda r: r.str.contains(search_q, case=False, na=False)
+                ).any(axis=1)
+                df_filtered = df_filtered[mask]
 
-    # payment status filter
-    if payment_filter != "All":
-        df_filtered = df_filtered[
-            df_filtered["Payment Status"] == payment_filter
-        ]
+            # client filter
+            if client_filter:
+                df_filtered = df_filtered[
+                    df_filtered["Client Name"].astype(str).str.contains(
+                        client_filter, case=False, na=False
+                    )
+                ]
 
-    # CSS for AgGrid header wrapping
-    st.markdown("""
-    <style>
-    .ag-header-cell-label {
-        white-space: normal !important;
-        overflow: visible !important;
-        text-overflow: clip !important;
-        height: auto !important;
-        line-height: 1.2 !important;
-    }
-    .ag-header-cell-text {
-        white-space: normal !important;
-    }
-    .ag-header {
-        height: 70px !important;
-        max-height: 120px !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+            # payment status filter
+            if payment_filter != "All":
+                df_filtered = df_filtered[
+                    df_filtered["Payment Status"] == payment_filter
+                ]
 
-    # contract status filter
-    if contract_filter != "All":
-        df_filtered = df_filtered[
-            df_filtered["Contract Status"] == contract_filter
-        ]
+            # CSS for AgGrid header wrapping
+            st.markdown("""
+            <style>
+            .ag-header-cell-label {
+                white-space: normal !important;
+                overflow: visible !important;
+                text-overflow: clip !important;
+                height: auto !important;
+                line-height: 1.2 !important;
+            }
+            .ag-header-cell-text {
+                white-space: normal !important;
+            }
+            .ag-header {
+                height: 70px !important;
+                max-height: 120px !important;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+
+            # contract status filter
+            if contract_filter != "All":
+                df_filtered = df_filtered[
+                    df_filtered["Contract Status"] == contract_filter
+                ]
 
 # ---------------- Show counts & export current DB ----------------
 conn = get_conn()
@@ -559,14 +557,6 @@ thead tr th {
 </style>
 """, unsafe_allow_html=True)
 
-
-
-
-
-
-
-
-
 st.markdown(
     """
     <style>
@@ -577,13 +567,3 @@ st.markdown(
     .ag-center-cols-container { border-right: 2px solid black !important; }
     </style>
     """, unsafe_allow_html=True)
-
-
-
-
-
-
-
-
-
-
