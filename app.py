@@ -186,7 +186,6 @@ function(params) {
 }
 """)
 
-""")
 gb.configure_column("Billboard Image / Link", cellRenderer=js_img, editable=False, width=120)
 
 row_style_js = JsCode(\"\"\"
@@ -390,6 +389,7 @@ st.download_button(
     file_name="Billboard_DB.csv",
     mime="text/csv"
 )
+
 
 
 
