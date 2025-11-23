@@ -408,7 +408,7 @@ remarks = st.sidebar.text_area(
 # ------------------------------------------------------------------
 
 # ... rest of file unchanged ...
-      rent = st.sidebar.number_input("Rent", value=row.get("Rent", 0), key="e_rent")
+rent = st.sidebar.number_input("Rent", value=row.get("Rent", 0), key="e_rent")
 adv = st.sidebar.number_input("Advance", value=row.get("Advance", 0), key="e_adv")
 
 partner_share = st.sidebar.text_input(
@@ -559,6 +559,7 @@ st.markdown(
     .ag-center-cols-container { border-right: 2px solid black !important; }
     </style>
     """, unsafe_allow_html=True)
+
 
 
 
