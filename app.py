@@ -383,9 +383,22 @@ if selected:
         adv = st.sidebar.number_input("Advance Received (PKR)", value=adv_val, min_value=0.0, format="%.2f", key="e_adv")
 
         pay_status = st.sidebar.selectbox("Payment Status", options=PAYMENT_OPTIONS, index=PAYMENT_OPTIONS.index(row.get("Payment Status")) if row.get("Payment Status") in PAYMENT_OPTIONS else 1, key="e_pay")
-        contract_status = st.sidebar.selectbox("Contract Status", options=CONTRACT_OPTIONS, index=CONTRACT_OPTIONS.index(row.get("Contract Status")) if row.get("Contract Status") in CONTRACT_OPTIONS else 2, key="e_contract")
+        # ... previous code unchanged ...
 
-        remarks = st.sidebar.text_area("Remarks / Notes", value=row.get("Remarks / Notes", ""), key="e_remarks")
+        pay_status = st.sidebar.selectbox(
+            "Payment Status",
+            options=PAYMENT_OPTIONS,
+            index=PAYMENT_OPTIONS.index(row.get("Payment Status")) if row.get("Payment Status") in PAYMENT_OPTIONS else 1,
+            key=f"e_payment_{sno}",
+        )
+        contract_status = st.sidebar.selectbox(
+            "Contract Status",
+            options=CONTRACT_OPTIONS,
+            index=CONTRACT_OPTIONS.index(row.get("Contract Status")) if row.get("Contract Status") in CONTRACT_OPTIONS else 1,
+            key=f"e_contract_{sno}",
+        )
+
+# ... rest of file unchanged ...
         partner_share = st.sidebar.text_input("Partner’s Share", value=row.get("Partner’s Share", ""), key="e_partner")
 
         # image upload
@@ -531,3 +544,4 @@ st.markdown(
     .ag-center-cols-container { border-right: 2px solid black !important; }
     </style>
     """, unsafe_allow_html=True)
+
