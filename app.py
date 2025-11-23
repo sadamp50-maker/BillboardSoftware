@@ -398,7 +398,6 @@ contract_status = st.sidebar.selectbox(
     index=CONTRACT_OPTIONS.index(row.get("Contract Status")) if row.get("Contract Status") in CONTRACT_OPTIONS else 0,
     key=f"e_contract_{sno}",
 )
-
 # Remarks field (added because 'remarks' is used later when saving)
 remarks = st.sidebar.text_area(
     "Remarks / Notes",
@@ -407,75 +406,69 @@ remarks = st.sidebar.text_area(
 )
 # ------------------------------------------------------------------
 
-    # Partner Share
-    partner_share = st.sidebar.text_input(
-        "Partner’s Share",
-        value=row.get("Partner’s Share", ""),
-        key=f"e_partner_{sno}",
-    )
+# Partner Share
+partner_share = st.sidebar.text_input(
+    "Partner’s Share",
+    value=row.get("Partner’s Share", ""),
+    key=f"e_partner_{sno}",
+)
 
-    # image upload
-    st.sidebar.markdown("### 📸 Upload / Replace Image")
-    uploaded_file = st.sidebar.file_uploader(
-        "Choose image (png/jpg):",
-        type=["png", "jpg", "jpeg"],
-        key=f"img_{sno}"
-    )
-    fpath = None
+# image upload
+st.sidebar.markdown("### 📸 Upload / Replace Image")
+uploaded_file = st.sidebar.file_uploader(
+    "Choose image (png/jpg):",
+    type=["png", "jpg", "jpeg"],
+    key=f"img_{sno}"
+)
 
-    if uploaded_file is not None:
-        ext = os.path.splitext(uploaded_file.name)[1]
-        fname = f"sno_{sno}{ext}"
-        fpath = os.path.join(IMAGE_DIR, fname)
-        with open(fpath, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-        st.sidebar.success(f"Image saved: {fpath}")
-        try:
-            st.sidebar.image(fpath, use_column_width=True)
-        except:
-            st.sidebar.write("Saved image but preview failed.")
+fpath = None
 
-    # show existing image preview if present
-    existing_img = row.get("Billboard Image / Link", "")
-    if isinstance(existing_img, str) and existing_img and os.path.exists(existing_img):
-        try:
-            st.sidebar.image(existing_img, caption="Existing Image", use_column_width=True)
-        except:
-            st.sidebar.write("Image path exists but preview failed.")
+if uploaded_file is not None:
+    ext = os.path.splitext(uploaded_file.name)[1]
+    fname = f"sno_{sno}{ext}"
+    fpath = os.path.join(IMAGE_DIR, fname)
+    with open(fpath, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+    st.sidebar.success(f"Image saved: {fpath}")
+    try:
+        st.sidebar.image(fpath, use_column_width=True)
+    except:
+        st.sidebar.write("Saved image but preview failed.")
 
-        # show existing image preview if present
-        existing_img = row.get("Billboard Image / Link", "")
-        if isinstance(existing_img, str) and existing_img and os.path.exists(existing_img):
-            try:
-                st.sidebar.image(existing_img, caption="Existing Image", use_column_width=True)
-            except:
-                st.sidebar.write("Image path exists but preview failed.")
+# show existing image preview if present
+existing_img = row.get("Billboard Image / Link", "")
+if isinstance(existing_img, str) and existing_img and os.path.exists(existing_img):
+    try:
+        st.sidebar.image(existing_img, caption="Existing Image", use_column_width=True)
+    except:
+        st.sidebar.write("Image path exists but preview failed.")
 
-        if st.sidebar.button("Apply changes"):
-            new_row = {col: "" for col in COLUMNS}
-            new_row["S No."] = str(sno)
-            new_row["Billboard ID"] = bid
-            new_row["Location / Address"] = loc
-            new_row["Billboard Size"] = size
-            new_row["Client Name"] = client
-            new_row["Company Name"] = company
-            new_row["Contact Number"] = contact
-            new_row["Email"] = email
-            new_row["Contract Start Date"] = str(start_date)
-            new_row["Contract End Date"] = str(end_date)
-            new_row["Rental Duration"] = row.get("Rental Duration", "")
-            new_row["Rent Amount (PKR)"] = str(round(rent, 2))
-            new_row["Advance Received (PKR)"] = str(round(adv, 2))
-            new_row["Balance / Credit (PKR)"] = str(round(rent - adv, 2))
-            new_row["Payment Status"] = pay_status
-            new_row["Contract Status"] = contract_status
-            new_row["Days Remaining"] = str(calc_days_remaining(str(end_date)))
-            new_row["Remarks / Notes"] = remarks
-            if fpath:
-                new_row["Billboard Image / Link"] = fpath
-            else:
-                new_row["Billboard Image / Link"] = row.get("Billboard Image / Link", "")
-            new_row["Partner’s Share"] = partner_share
+if st.sidebar.button("Apply changes"):
+    new_row = {col: "" for col in COLUMNS}
+    new_row["S No."] = str(sno)
+    new_row["Billboard ID"] = bid
+    new_row["Location / Address"] = loc
+    new_row["Billboard Size"] = size
+    new_row["Client Name"] = client
+    new_row["Company Name"] = company
+    new_row["Contact Number"] = contact
+    new_row["Email"] = email
+    new_row["Contract Start Date"] = str(start_date)
+    new_row["Contract End Date"] = str(end_date)
+    new_row["Rental Duration"] = row.get("Rental Duration", "")
+    new_row["Rent Amount (PKR)"] = str(round(rent, 2))
+    new_row["Advance Received (PKR)"] = str(round(adv, 2))
+    new_row["Balance / Credit (PKR)"] = str(round(rent - adv, 2))
+    new_row["Payment Status"] = pay_status
+    new_row["Contract Status"] = contract_status
+    new_row["Days Remaining"] = str(calc_days_remaining(str(end_date)))
+    new_row["Remarks / Notes"] = remarks
+    new_row["Partner’s Share"] = partner_share
+
+    if fpath:
+        new_row["Billboard Image / Link"] = fpath
+    else:
+        new_row["Billboard Image / Link"] = row.get("Billboard Image / Link", "")
 
             save_row_to_db(new_row)
             st.sidebar.success("Row updated and saved to database.")
@@ -570,6 +563,7 @@ st.markdown(
     .ag-center-cols-container { border-right: 2px solid black !important; }
     </style>
     """, unsafe_allow_html=True)
+
 
 
 
