@@ -419,8 +419,8 @@ partner_share = st.sidebar.text_input(
         # image upload
 st.sidebar.markdown("### 📸 Upload / Replace Image")
 uploaded_file = st.sidebar.file_uploader("Choose image (png/jpg):", type=["png", "jpg", "jpeg"], key=f"img_{sno}")
-        fpath = None
-        if uploaded_file is not None:
+fpath = None
+    if uploaded_file is not None:
             ext = os.path.splitext(uploaded_file.name)[1]
             fname = f"sno_{sno}{ext}"
             fpath = os.path.join(IMAGE_DIR, fname)
@@ -559,6 +559,7 @@ st.markdown(
     .ag-center-cols-container { border-right: 2px solid black !important; }
     </style>
     """, unsafe_allow_html=True)
+
 
 
 
