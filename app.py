@@ -469,48 +469,62 @@ if st.sidebar.button("Apply changes"):
         new_row["Billboard Image / Link"] = fpath
     else:
         new_row["Billboard Image / Link"] = row.get("Billboard Image / Link", "")
+    save_row_to_db(new_row)
+    st.sidebar.success("Row updated and saved to database.")
 
-            save_row_to_db(new_row)
-            st.sidebar.success("Row updated and saved to database.")
+    # refresh main display
+    df_raw = load_df_from_db()
+    df_raw["_rowid_"] = df_raw["_rowid_"].astype(int)
+    display_df = df_raw.drop(columns=["_rowid_"]).copy()
 
-            # refresh main display
-            df_raw = load_df_from_db()
-            df_raw["_rowid_"] = df_raw["_rowid_"].astype(int)
-            display_df = df_raw.drop(columns=["_rowid_"]).copy()
-            df_filtered = display_df.copy()
-            if search_q:
-                mask = df_filtered.astype(str).apply(lambda r: r.str.contains(search_q, case=False, na=False)).any(axis=1)
-                df_filtered = df_filtered[mask]
-            if client_filter:
-                df_filtered = df_filtered[df_filtered["Client Name"].astype(str).str.contains(client_filter, case=False, na=False)]
-            if payment_filter != "All":
-                df_filtered = df_filtered[df_filtered["Payment Status"] == payment_filter]
-            st.markdown("""
-<style>
-/* Make AgGrid column headers show full text */
-.ag-header-cell-label {
-    white-space: normal !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
-    height: auto !important;
-    line-height: 1.2 !important;
-}
+    df_filtered = display_df.copy()
 
-/* Allow wrapping inside header */
-.ag-header-cell-text {
-    white-space: normal !important;
-}
+    # search filter
+    if search_q:
+        mask = df_filtered.astype(str).apply(
+            lambda r: r.str.contains(search_q, case=False, na=False)
+        ).any(axis=1)
+        df_filtered = df_filtered[mask]
 
-/* Optional: Increase header height so wrapped text fits */
-.ag-header {
-    height: 70px !important;
-    max-height: 120px !important;
-}
-</style>
-""", unsafe_allow_html=True)
+    # client filter
+    if client_filter:
+        df_filtered = df_filtered[
+            df_filtered["Client Name"].astype(str).str.contains(
+                client_filter, case=False, na=False
+            )
+        ]
 
-            if contract_filter != "All":
-                df_filtered = df_filtered[df_filtered["Contract Status"] == contract_filter]
+    # payment status filter
+    if payment_filter != "All":
+        df_filtered = df_filtered[
+            df_filtered["Payment Status"] == payment_filter
+        ]
+
+    # CSS for AgGrid header wrapping
+    st.markdown("""
+    <style>
+    .ag-header-cell-label {
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        height: auto !important;
+        line-height: 1.2 !important;
+    }
+    .ag-header-cell-text {
+        white-space: normal !important;
+    }
+    .ag-header {
+        height: 70px !important;
+        max-height: 120px !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # contract status filter
+    if contract_filter != "All":
+        df_filtered = df_filtered[
+            df_filtered["Contract Status"] == contract_filter
+        ]
 
 # ---------------- Show counts & export current DB ----------------
 conn = get_conn()
@@ -563,6 +577,7 @@ st.markdown(
     .ag-center-cols-container { border-right: 2px solid black !important; }
     </style>
     """, unsafe_allow_html=True)
+
 
 
 
